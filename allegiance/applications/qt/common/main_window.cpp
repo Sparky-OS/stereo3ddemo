@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <applications/qt/common/main_window.h>
 #include <applications/qt/common/side_menu.h>
 
@@ -20,7 +21,7 @@ void MainWindow::setEmbeddedWindow(QWindow* embeddedWindow)
     // The container sizes its window to its own rectangle whenever an ancestor moves or resizes; with two views
     // the window is resized back to hold both, right after
     connect(m_embeddedWindow, &QWindow::widthChanged, this, [this]() {
-        if (m_embeddedViews > 1)
+        if (m_embeddedViews > 1 || m_embeddedRenderHeight > 0)
             QTimer::singleShot(0, this, &MainWindow::applyEmbeddedGeometry);
     });
     setCentralWidget(m_embeddedContainer);
@@ -54,12 +55,33 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* event)
     return QMainWindow::eventFilter(watched, event);
 }
 
+void MainWindow::setEmbeddedRenderHeight(int height)
+{
+    const int render = std::max(0, height);
+    if (m_embeddedRenderHeight == render)
+        return;
+    m_embeddedRenderHeight = render;
+    applyEmbeddedGeometry();
+}
+
 void MainWindow::applyEmbeddedGeometry()
 {
-    if (!m_embeddedWindow || !m_embeddedContainer || m_embeddedViews <= 1)
+    if (!m_embeddedWindow || !m_embeddedContainer)
         return;
-    const QSize size = m_embeddedContainer->size();
-    const QRect geometry(m_embeddedContainer->mapTo(m_embeddedContainer->window(), QPoint()), QSize(size.width() * m_embeddedViews, size.height()));
+    const QSize shown = m_embeddedContainer->size();
+    if (m_embeddedViews <= 1 && m_embeddedRenderHeight <= 0) {
+        // The window follows its container, as any embedded window; it says no view size of its own
+        if (m_embeddedWindow->property("_q_stereo_view_size").isValid()) {
+            m_embeddedWindow->setProperty("_q_stereo_view_size", QVariant());
+            m_embeddedWindow->resize(shown);
+        }
+        return;
+    }
+    // Each eye at the render resolution (the container's size when none is chosen), the views side by side when
+    // the program draws the pair; the desktop shows the window at one view's size
+    const QSize eye = StereoController::renderSizeFor(m_embeddedRenderHeight, shown);
+    const QRect geometry(m_embeddedContainer->mapTo(m_embeddedContainer->window(), QPoint()), QSize(eye.width() * m_embeddedViews, eye.height()));
+    m_embeddedWindow->setProperty("_q_stereo_view_size", m_embeddedRenderHeight > 0 ? QVariant(shown) : QVariant());
     if (m_embeddedWindow->geometry() != geometry)
         m_embeddedWindow->setGeometry(geometry);
 }

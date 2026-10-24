@@ -14,9 +14,10 @@ class StereoController : public QObject
     Q_PROPERTY(QString activePath READ activePath NOTIFY activePathChanged)
     Q_PROPERTY(bool activeStereo READ activeStereo NOTIFY activePathChanged)
     Q_PROPERTY(QSize eyeSize READ eyeSize NOTIFY eyeSizeChanged)
-    // The render resolution per eye: each eye is drawn at this size and the desktop resizes it once for the
-    // screen; an invalid size follows the 3D area
-    Q_PROPERTY(QSize renderResolution READ renderResolution WRITE setRenderResolution NOTIFY renderResolutionChanged)
+    // The render resolution per eye, as the height of an eye's picture: each eye is drawn at that height, with the
+    // width the 3D area's aspect gives (an eye is never stretched), and the desktop resizes it once for the screen;
+    // 0 follows the 3D area
+    Q_PROPERTY(int renderHeight READ renderHeight WRITE setRenderHeight NOTIFY renderResolutionChanged)
     Q_PROPERTY(QStringList renderResolutionChoices READ renderResolutionChoices CONSTANT)
     Q_PROPERTY(int renderResolutionIndex READ renderResolutionIndex WRITE setRenderResolutionIndex NOTIFY renderResolutionChanged)
     Q_PROPERTY(bool displaySettingsAvailable READ displaySettingsAvailable CONSTANT)
@@ -46,13 +47,15 @@ public:
 
     QSize eyeSize() const;
     void setEyeSize(const QSize& size);
-    QSize renderResolution() const;
-    void setRenderResolution(const QSize& size);
-    // The choices offered: the 3D area's own size first, then the common sizes
+    int renderHeight() const;
+    void setRenderHeight(int height);
+    // The size of an eye's picture for a shown size: the chosen height with the shown aspect, or the shown size
+    static QSize renderSizeFor(int height, const QSize& shown);
+    // The choices offered: the 3D area's own size first, then the common heights
     QStringList renderResolutionChoices() const;
     int renderResolutionIndex() const;
     void setRenderResolutionIndex(int index);
-    static QList<QSize> renderResolutionSizes();
+    static QList<int> renderHeights();
 
     bool displaySettingsAvailable() const;
     Q_INVOKABLE void openDisplaySettings();
@@ -72,5 +75,5 @@ private:
     QString m_activePath;
     bool m_activeStereo = false;
     QSize m_eyeSize;
-    QSize m_renderResolution;
+    int m_renderHeight = 0;
 };

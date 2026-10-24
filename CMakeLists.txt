@@ -28,6 +28,15 @@ cmake_dependent_option(
     "BUILD_QT_UI"
     OFF
 )
+# The phase 2 renderer of the stereo version: the scene through Qt Quick 3D, each eye drawn by the edition's Qt
+# Quick (Vulkan or OpenGL); the Qt 3D renderer stays as an option in the same program
+cmake_dependent_option(
+    BUILD_QUICK3D_RENDERER
+    "Build the Qt Quick 3D renderer"
+    ON
+    "BUILD_QT_UI"
+    OFF
+)
 
 # The Serenity renderer, the KDGui UI and the Flutter UI need KDAB's Serenity engine, which is not public;
 # on Linux they are off unless asked for.

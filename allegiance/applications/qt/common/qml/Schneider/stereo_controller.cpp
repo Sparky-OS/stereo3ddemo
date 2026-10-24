@@ -2,6 +2,8 @@
 
 #include <QProcess>
 #include <QSettings>
+
+#include <algorithm>
 #include <QStandardPaths>
 
 namespace {
@@ -20,12 +22,8 @@ StereoController::StereoController(QObject* parent)
         m_path = Path::QuadBuffer;
     else if (path == QLatin1String("sidebyside"))
         m_path = Path::SideBySide;
-    // "WxH", or anything else for the 3D area's own size
-    const QStringList resolution = settings.value(renderResolutionKey).toString().split(QLatin1Char('x'));
-    if (resolution.size() == 2)
-        m_renderResolution = QSize(resolution[0].toInt(), resolution[1].toInt());
-    if (m_renderResolution.width() <= 0 || m_renderResolution.height() <= 0)
-        m_renderResolution = QSize();
+    // The height of an eye's picture; anything else for the 3D area's own size
+    m_renderHeight = std::max(0, settings.value(renderResolutionKey).toInt());
 }
 
 bool StereoController::enabled() const
@@ -92,46 +90,54 @@ void StereoController::setEyeSize(const QSize& size)
     Q_EMIT eyeSizeChanged();
 }
 
-QSize StereoController::renderResolution() const
+int StereoController::renderHeight() const
 {
-    return m_renderResolution;
+    return m_renderHeight;
 }
 
-void StereoController::setRenderResolution(const QSize& size)
+void StereoController::setRenderHeight(int height)
 {
-    const QSize chosen = (size.width() > 0 && size.height() > 0) ? size : QSize();
-    if (m_renderResolution == chosen)
+    const int chosen = std::max(0, height);
+    if (m_renderHeight == chosen)
         return;
-    m_renderResolution = chosen;
-    QSettings().setValue(renderResolutionKey, chosen.isValid() ? QStringLiteral("%1x%2").arg(chosen.width()).arg(chosen.height()) : QStringLiteral("area"));
+    m_renderHeight = chosen;
+    QSettings().setValue(renderResolutionKey, chosen);
     Q_EMIT renderResolutionChanged();
 }
 
-QList<QSize> StereoController::renderResolutionSizes()
+QSize StereoController::renderSizeFor(int height, const QSize& shown)
 {
-    return { QSize(), QSize(1280, 720), QSize(1920, 1080), QSize(2560, 1440), QSize(3840, 2160) };
+    if (height <= 0 || shown.height() <= 0 || shown.width() <= 0)
+        return shown;
+    const int width = qRound(double(height) * shown.width() / shown.height());
+    return QSize(std::max(width, 1), height);
+}
+
+QList<int> StereoController::renderHeights()
+{
+    return { 0, 720, 1080, 1440, 2160 };
 }
 
 QStringList StereoController::renderResolutionChoices() const
 {
     QStringList choices;
-    for (const QSize& size : renderResolutionSizes())
-        choices << (size.isValid() ? QStringLiteral("%1 x %2").arg(size.width()).arg(size.height()) : tr("Same as the 3D area"));
+    for (int height : renderHeights())
+        choices << (height > 0 ? tr("%1 lines").arg(height) : tr("Same as the 3D area"));
     return choices;
 }
 
 int StereoController::renderResolutionIndex() const
 {
-    const int index = renderResolutionSizes().indexOf(m_renderResolution);
+    const int index = renderHeights().indexOf(m_renderHeight);
     return index < 0 ? 0 : index;
 }
 
 void StereoController::setRenderResolutionIndex(int index)
 {
-    const QList<QSize> sizes = renderResolutionSizes();
-    if (index < 0 || index >= sizes.size())
+    const QList<int> heights = renderHeights();
+    if (index < 0 || index >= heights.size())
         return;
-    setRenderResolution(sizes[index]);
+    setRenderHeight(heights[index]);
 }
 
 bool StereoController::displaySettingsAvailable() const

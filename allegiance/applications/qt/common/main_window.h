@@ -22,6 +22,11 @@ public:
     // window, so each eye keeps the size of the 3D area (the desktop shows it at one view's size).
     void setEmbeddedViews(int views);
     int embeddedViews() const noexcept { return m_embeddedViews; }
+    // The render resolution per eye, as a height: an eye's picture is that high and as wide as the 3D area's aspect
+    // gives; the 3D window's size becomes it (one view, or the two side by side) and the window says the size one
+    // view is shown at; 0 follows the 3D area
+    void setEmbeddedRenderHeight(int height);
+    int embeddedRenderHeight() const noexcept { return m_embeddedRenderHeight; }
 
     SideMenu* sideMenu();
 
@@ -57,6 +62,7 @@ private:
     QWindow* m_embeddedWindow{ nullptr };
     QWidget* m_embeddedContainer{ nullptr };
     int m_embeddedViews{ 1 };
+    int m_embeddedRenderHeight{ 0 };
     SideMenu* m_sideMenu;
     bool m_cursor = true;
 

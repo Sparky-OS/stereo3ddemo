@@ -1,31 +1,62 @@
 #include <QApplication>
 #include <QCommandLineParser>
+#include <QQuickWindow>
+#include <QSettings>
+#include <QSurfaceFormat>
 #include <QTranslator>
 #include <Qt3DExtras/Qt3DWindow>
 
 #include <applications/qt/common/renderer_initializer.h>
 #include <applications/qt/common/stereo_output.h>
+#include <applications/qt/common/qml/Schneider/renderer_controller.h>
 #include <renderer/qt3d/qt3d_renderer.h>
+#ifdef ALLEGIANCE_QUICK3D
+#include <renderer/quick3d/quick3d_renderer.h>
+#include <QtQml/qqmlextensionplugin.h>
+// The renderer's QML module is static
+Q_IMPORT_QML_PLUGIN(Stereo3D_Quick3DPlugin)
+#endif
 #include <QOpenGLContext>
 
-using Initializer = all::qt::RendererInitializer<Qt3DExtras::Qt3DWindow, all::qt3d::Qt3DRenderer>;
+// The two renderers of the stereo version in one program: the original Qt 3D renderer (OpenGL) and the phase 2
+// Qt Quick 3D renderer (Vulkan or OpenGL, each eye drawn by the edition's Qt Quick). The choice is under Advanced.
+using Qt3DInitializer = all::qt::RendererInitializer<Qt3DExtras::Qt3DWindow, all::qt3d::Qt3DRenderer>;
+#ifdef ALLEGIANCE_QUICK3D
+using Quick3DInitializer = all::qt::RendererInitializer<QQuickWindow, all::quick3d::Quick3DRenderer>;
+#endif
+
+namespace {
+
+// Which renderer this start uses: the setting, unless the build lacks it
+RendererController::Engine engineForThisStart()
+{
+    const auto chosen = RendererController::fromName(QSettings().value(QStringLiteral("renderer/engine")).toString(), RendererController::Engine::Quick3DVulkan);
+#ifndef ALLEGIANCE_QUICK3D
+    Q_UNUSED(chosen);
+    return RendererController::Engine::Qt3DOpenGL;
+#else
+    return chosen;
+#endif
+}
+
+} // namespace
 
 int main(int argc, char** argv)
 {
     Q_INIT_RESOURCE(resources);
 
-    constexpr bool useRHI = false;
-    if constexpr (useRHI) {
-        qputenv("QT3D_RENDERER", "rhi");
-        qputenv("QSG_RHI_BACKEND", "opengl"); // could also be vulkan, metal or d3d11, d3d12.
-        // Note: that stereo is not supported on RHI backends, only on opengl, d3d12 and vulkan
-    } else {
-        qputenv("QSG_RHI_BACKEND", "opengl");
-        qputenv("QT3D_RENDERER", "opengl");
-    }
-
     QCoreApplication::setOrganizationName(QStringLiteral("stereo3ddemo"));
     QCoreApplication::setApplicationName(QStringLiteral("stereo3ddemo"));
+
+    // The graphics API is Qt Quick's for the whole program and is fixed before the first window
+    const RendererController::Engine engine = engineForThisStart();
+    if (RendererController::usesQt3D(engine)) {
+        qputenv("QSG_RHI_BACKEND", "opengl");
+        qputenv("QT3D_RENDERER", "opengl");
+        QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
+    } else if (!qEnvironmentVariableIsSet("QSG_RHI_BACKEND")) {
+        QQuickWindow::setGraphicsApi(RendererController::usesVulkan(engine) ? QSGRendererInterface::Vulkan : QSGRendererInterface::OpenGL);
+    }
 
     QApplication app(argc, argv);
     QApplication::setApplicationDisplayName(QStringLiteral("Stereo Demonstrator - " ALLEGIANCE_BUILD_STR));
@@ -57,28 +88,62 @@ int main(int argc, char** argv)
 
     all::qt::MainWindow mainWindow({ 1920, 1080 }); // Main Application Window
     StereoController* stereo = mainWindow.sideMenu()->stereoController();
+    RendererController* rendererChoice = mainWindow.sideMenu()->rendererController();
+    rendererChoice->setActiveEngine(engine);
+    qCDebug(all::qt::lcStereo) << "renderer" << RendererController::name(engine) << "graphics api" << int(QQuickWindow::graphicsApi());
 
     std::unique_ptr<all::qt::StereoDeclaration> declaration;
-    std::unique_ptr<Initializer> initializer;
+    std::unique_ptr<Qt3DInitializer> qt3dInitializer;
+#ifdef ALLEGIANCE_QUICK3D
+    std::unique_ptr<Quick3DInitializer> quick3dInitializer;
+#endif
     bool shown = false;
+    QMetaObject::Connection renderSizeConnection;
 
     // Makes the 3D window and its renderer for the path the user asked for and the stack offers; called again
     // when the user changes the 3D options, since a stereo context is a property of the window.
     auto start = [&]() {
-        initializer.reset();
+        qt3dInitializer.reset();
+#ifdef ALLEGIANCE_QUICK3D
+        quick3dInitializer.reset();
+#endif
         declaration.reset();
+        QObject::disconnect(renderSizeConnection);
 
         const bool wants3D = stereo->enabled() && !qEnvironmentVariableIsSet("DISABLE_STEREO");
         const StereoController::Path choice = stereo->path();
         const bool tryQuadBuffer = wants3D && choice != StereoController::Path::SideBySide;
 
-        auto* renderingSurface = new Qt3DExtras::Qt3DWindow(); // Rendering Surface for 3D Renderer
+        QWindow* renderingSurface = nullptr; // Rendering Surface for 3D Renderer
+        if (RendererController::usesQt3D(engine)) {
+            renderingSurface = new Qt3DExtras::Qt3DWindow();
+        } else {
+#ifdef ALLEGIANCE_QUICK3D
+            auto* quickWindow = new QQuickWindow();
+            quickWindow->setColor(QColor(0x48, 0x53, 0x6a));
+            // The views antialias their own pictures; the window's own buffers stay plain, so that each eye's
+            // target is the platform's (a multisample resolve would land in the left one)
+            QSurfaceFormat plain = quickWindow->requestedFormat();
+            plain.setSamples(0);
+            quickWindow->setFormat(plain);
+            renderingSurface = quickWindow;
+#endif
+        }
+        if (!renderingSurface)
+            return;
         if (tryQuadBuffer) {
-            // The window's format stays the one Qt3D gave it (its renderer's context is made from the same
-            // default format), with the stereo buffers added
+            // The window's format stays the one its renderer gave it, with the stereo buffers added: on Vulkan a
+            // two-layer swapchain, on OpenGL the platform's two views
             QSurfaceFormat format = renderingSurface->requestedFormat();
             format.setStereo(true);
             renderingSurface->setFormat(format);
+            // A Qt Quick window is drawn once per eye by the edition's Qt Quick (its surface gets its two views
+            // when it is created, so this comes first); its pair is 3D content, two cameras, not a 2D picture
+            // with depth (qt6-base +stereo3d11 puts no desktop-depth mark on it)
+            if (!RendererController::usesQt3D(engine)) {
+                renderingSurface->setProperty("_q_stereo_depth", true);
+                renderingSurface->setProperty("_q_stereo_content", true);
+            }
         }
 
         // Set embedded surface that holds 3d content window in the MainWindow
@@ -89,7 +154,7 @@ int main(int argc, char** argv)
         }
         renderingSurface->create();
 
-        // The window's own format says whether the stack gave a stereo context
+        // The window's own format says whether the stack gave a stereo surface
         const bool quadBuffer = tryQuadBuffer && renderingSurface->format().stereo();
         all::StereoPath path = all::StereoPath::Off;
         if (!wants3D)
@@ -101,14 +166,28 @@ int main(int argc, char** argv)
         else
             path = all::StereoPath::Unavailable;
         qCDebug(all::qt::lcStereo) << "3D" << wants3D << "choice" << int(choice) << "window stereo" << renderingSurface->format().stereo()
-                                   << "declaration supported" << all::qt::stereoDeclarationSupported() << "path" << all::qt::stereoPathName(path);
+                                   << "declaration supported" << all::qt::stereoDeclarationSupported() << "path" << all::qt::stereoPathName(path)
+                                   << "renderer" << RendererController::name(engine);
 
         mainWindow.setEmbeddedViews(all::stereoViews(path));
+        // The render resolution per eye: the Qt Quick 3D renderer draws each eye at it; the Qt 3D renderer follows
+        // the 3D area
+        auto applyRenderSize = [&mainWindow, stereo, engine, path]() {
+            mainWindow.setEmbeddedRenderHeight(!RendererController::usesQt3D(engine) && all::stereoDraws(path) ? stereo->renderHeight() : 0);
+        };
+        applyRenderSize();
+        renderSizeConnection = QObject::connect(stereo, &StereoController::renderResolutionChanged, &mainWindow, applyRenderSize);
         if (path == all::StereoPath::SideBySide)
             declaration = std::make_unique<all::qt::StereoDeclaration>(renderingSurface, mainWindow.windowHandle());
 
         // Fire off Rendering
-        initializer = std::make_unique<Initializer>(&mainWindow, renderingSurface, path, initialModel);
+        if (RendererController::usesQt3D(engine)) {
+            qt3dInitializer = std::make_unique<Qt3DInitializer>(&mainWindow, static_cast<Qt3DExtras::Qt3DWindow*>(renderingSurface), path, initialModel);
+        } else {
+#ifdef ALLEGIANCE_QUICK3D
+            quick3dInitializer = std::make_unique<Quick3DInitializer>(&mainWindow, static_cast<QQuickWindow*>(renderingSurface), path, initialModel);
+#endif
+        }
 
         QString description;
         switch (path) {

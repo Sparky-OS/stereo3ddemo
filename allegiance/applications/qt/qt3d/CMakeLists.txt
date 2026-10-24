@@ -43,6 +43,11 @@ target_link_libraries(
     ${PROJECT_NAME}
     PUBLIC Qt6::Widgets KDAB::QtCommon KDAB::Qt3DRenderer
 )
+# The Qt Quick 3D renderer in the same program, chosen under Advanced
+if(BUILD_QUICK3D_RENDERER)
+    target_link_libraries(${PROJECT_NAME} PUBLIC KDAB::Quick3DRenderer)
+    qt_import_qml_plugins(${PROJECT_NAME})
+endif()
 
 set_target_properties(
     ${PROJECT_NAME}
