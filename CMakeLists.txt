@@ -94,6 +94,7 @@ add_subdirectory(shared)
 add_subdirectory(allegiance)
 
 if(BUILD_UNIT_TESTS)
+    enable_testing()
     add_subdirectory(tests)
 endif()
 
