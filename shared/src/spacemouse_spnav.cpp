@@ -2,6 +2,8 @@
 #include <shared/stereo_camera.h>
 #include <spnav.h>
 
+#include <glm/ext/matrix_transform.hpp>
+
 using namespace all;
 
 SpacemouseSpnav::SpacemouseSpnav(all::StereoCamera* camera, std::shared_ptr<all::ModelNavParameters> p)
@@ -45,8 +47,8 @@ void SpacemouseSpnav::poll()
         switch (sev.type) {
         case SPNAV_EVENT_MOTION:
             // qCDebug(spcms) << sev.motion.rx << sev.motion.ry << sev.motion.rz;
-            rotatedViewMatrix[3] = { m_camera->position() + glm::vec3{ sev.motion.x, sev.motion.y, sev.motion.z } * m_translFactor, 1 };
-            m_camera->setForwardVector(combinedRotation * m_camera->forwardVector());
+            m_camera->position = m_camera->position() + glm::vec3{ sev.motion.x, sev.motion.y, sev.motion.z } * m_translFactor;
+            m_camera->setForwardVector(glm::vec3(combinedRotation * glm::vec4(m_camera->forwardVector(), 0.0f)));
 
             break;
         case SPNAV_EVENT_BUTTON:
