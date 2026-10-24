@@ -11,7 +11,7 @@ stereo3ddemo (0.3.1+git20250303.4f99a5d+dfsg+stereo3d2) unstable; urgency=medium
     Enable 3D, the render resolution per eye and Display settings. A
     layout test checks it.
   * Quad buffer on X11 needs qt6-3d +stereo3d1 (the renderer's context
-    follows the window's format).
+    follows the window's format); the package depends on it.
   * The render resolution label wraps, so a longer language is not cut at
     the menu's width.
 
