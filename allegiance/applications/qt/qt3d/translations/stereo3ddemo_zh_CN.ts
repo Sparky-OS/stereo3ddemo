@@ -16,34 +16,6 @@
         <translation>关闭：只有一幅画面，不作任何声明。</translation>
     </message>
     <message>
-        <source>Stereo output</source>
-        <translation>立体输出</translation>
-    </message>
-    <message>
-        <source>Automatic</source>
-        <translation>自动</translation>
-    </message>
-    <message>
-        <source>Quad buffer</source>
-        <translation>四重缓冲</translation>
-    </message>
-    <message>
-        <source>Full side by side (declared)</source>
-        <translation>全幅左右并排（已声明）</translation>
-    </message>
-    <message>
-        <source>Automatic: a stereo OpenGL context when the stack gives one, else one picture.</source>
-        <translation>自动：系统提供立体 OpenGL 上下文时使用它，否则只有一幅画面。</translation>
-    </message>
-    <message>
-        <source>Quad buffer: each eye in its own back buffer; the display stack packs and declares them.</source>
-        <translation>四重缓冲：每只眼各用一个后台缓冲区，由显示栈拼合并声明。</translation>
-    </message>
-    <message>
-        <source>Full side by side (declared): both eyes drawn side by side by the program, declared to the desktop; for stacks without a stereo context.</source>
-        <translation>全幅左右并排（已声明）：由程序将双眼画面并排绘制并向桌面声明，适用于没有立体上下文的系统。</translation>
-    </message>
-    <message>
         <source>Active: %1</source>
         <translation>当前：%1</translation>
     </message>
@@ -58,6 +30,41 @@
     <message>
         <source>Display settings</source>
         <translation>显示设置</translation>
+    </message>
+</context>
+<context>
+    <name>StereoPathMenu</name>
+    <message>
+        <source>Stereo 3D</source>
+        <translation>立体 3D</translation>
+    </message>
+    <message>
+        <source>How the eyes reach the desktop</source>
+        <translation>双眼画面如何送达桌面</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>自动</translation>
+    </message>
+    <message>
+        <source>Quad buffer</source>
+        <translation>四重缓冲</translation>
+    </message>
+    <message>
+        <source>Two views side by side (declared)</source>
+        <translation>两个视图并排（已声明）</translation>
+    </message>
+    <message>
+        <source>Automatic: a stereo OpenGL context when the stack gives one, else the two views side by side, declared.</source>
+        <translation>自动：系统提供立体 OpenGL 上下文时使用它，否则将两个视图并排并声明。</translation>
+    </message>
+    <message>
+        <source>Quad buffer: each eye in its own back buffer; the display stack packs and declares them.</source>
+        <translation>四重缓冲：每只眼各用一个后台缓冲区，由显示栈拼合并声明。</translation>
+    </message>
+    <message>
+        <source>Two views side by side (declared): both eyes drawn side by side by the program into one window and declared to the desktop; for stacks without a stereo context.</source>
+        <translation>两个视图并排（已声明）：由程序将双眼画面并排绘制到同一窗口并向桌面声明，适用于没有立体上下文的系统。</translation>
     </message>
 </context>
 <context>
@@ -78,7 +85,7 @@
         <translation>3D 已关闭：一幅画面</translation>
     </message>
     <message>
-        <source>No stereo context: one picture, the left eye. Choose Full side by side (declared) to draw both eyes without one</source>
+        <source>No stereo context: one picture, the left eye. Choose Automatic or Two views side by side (declared) to draw both eyes without one</source>
         <translation>没有立体上下文：只有左眼一幅画面。选择“全幅左右并排（已声明）”可在没有立体上下文时绘制双眼画面</translation>
     </message>
     <message>

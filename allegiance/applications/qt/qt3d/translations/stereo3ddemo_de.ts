@@ -16,34 +16,6 @@
         <translation>Aus: ein Bild, nichts gemeldet.</translation>
     </message>
     <message>
-        <source>Stereo output</source>
-        <translation>Stereo-Ausgabe</translation>
-    </message>
-    <message>
-        <source>Automatic</source>
-        <translation>Automatisch</translation>
-    </message>
-    <message>
-        <source>Quad buffer</source>
-        <translation>Quad-Buffer</translation>
-    </message>
-    <message>
-        <source>Full side by side (declared)</source>
-        <translation>Volles Side-by-Side (gemeldet)</translation>
-    </message>
-    <message>
-        <source>Automatic: a stereo OpenGL context when the stack gives one, else one picture.</source>
-        <translation>Automatisch: ein Stereo-OpenGL-Kontext, wenn das System einen liefert, sonst ein Bild.</translation>
-    </message>
-    <message>
-        <source>Quad buffer: each eye in its own back buffer; the display stack packs and declares them.</source>
-        <translation>Quad-Buffer: jedes Auge in seinem eigenen Back-Buffer; die Anzeigeschicht packt und meldet sie.</translation>
-    </message>
-    <message>
-        <source>Full side by side (declared): both eyes drawn side by side by the program, declared to the desktop; for stacks without a stereo context.</source>
-        <translation>Volles Side-by-Side (gemeldet): beide Augen vom Programm nebeneinander gezeichnet und der Arbeitsfläche gemeldet; für Systeme ohne Stereo-Kontext.</translation>
-    </message>
-    <message>
         <source>Active: %1</source>
         <translation>Aktiv: %1</translation>
     </message>
@@ -58,6 +30,41 @@
     <message>
         <source>Display settings</source>
         <translation>Anzeigeeinstellungen</translation>
+    </message>
+</context>
+<context>
+    <name>StereoPathMenu</name>
+    <message>
+        <source>Stereo 3D</source>
+        <translation>Stereo 3D</translation>
+    </message>
+    <message>
+        <source>How the eyes reach the desktop</source>
+        <translation>Wie die Augen zur Arbeitsfläche gelangen</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>Automatisch</translation>
+    </message>
+    <message>
+        <source>Quad buffer</source>
+        <translation>Quad-Buffer</translation>
+    </message>
+    <message>
+        <source>Two views side by side (declared)</source>
+        <translation>Zwei Ansichten nebeneinander (gemeldet)</translation>
+    </message>
+    <message>
+        <source>Automatic: a stereo OpenGL context when the stack gives one, else the two views side by side, declared.</source>
+        <translation>Automatisch: ein Stereo-OpenGL-Kontext, wenn das System einen liefert, sonst die zwei Ansichten nebeneinander, gemeldet.</translation>
+    </message>
+    <message>
+        <source>Quad buffer: each eye in its own back buffer; the display stack packs and declares them.</source>
+        <translation>Quad-Buffer: jedes Auge in seinem eigenen Back-Buffer; die Anzeigeschicht packt und meldet sie.</translation>
+    </message>
+    <message>
+        <source>Two views side by side (declared): both eyes drawn side by side by the program into one window and declared to the desktop; for stacks without a stereo context.</source>
+        <translation>Zwei Ansichten nebeneinander (gemeldet): beide Augen vom Programm nebeneinander in ein Fenster gezeichnet und der Arbeitsfläche gemeldet; für Systeme ohne Stereo-Kontext.</translation>
     </message>
 </context>
 <context>
@@ -78,7 +85,7 @@
         <translation>3D aus: ein Bild</translation>
     </message>
     <message>
-        <source>No stereo context: one picture, the left eye. Choose Full side by side (declared) to draw both eyes without one</source>
+        <source>No stereo context: one picture, the left eye. Choose Automatic or Two views side by side (declared) to draw both eyes without one</source>
         <translation>Kein Stereo-Kontext: ein Bild, das linke Auge. Wählen Sie Volles Side-by-Side (gemeldet), um beide Augen ohne Stereo-Kontext zu zeichnen</translation>
     </message>
     <message>

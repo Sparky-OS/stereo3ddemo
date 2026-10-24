@@ -30,6 +30,7 @@ qt_add_qml_module(
     "qml/CustomSlider.qml"
     "qml/MiscMenu.qml"
     "qml/StereoMenu.qml"
+    "qml/StereoPathMenu.qml"
     RESOURCES
     "qml/checked.svg"
     "qml/unchecked.svg"

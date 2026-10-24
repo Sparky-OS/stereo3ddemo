@@ -16,34 +16,6 @@
         <translation>끔: 영상 하나만 표시하며 아무것도 선언하지 않습니다.</translation>
     </message>
     <message>
-        <source>Stereo output</source>
-        <translation>스테레오 출력</translation>
-    </message>
-    <message>
-        <source>Automatic</source>
-        <translation>자동</translation>
-    </message>
-    <message>
-        <source>Quad buffer</source>
-        <translation>쿼드 버퍼</translation>
-    </message>
-    <message>
-        <source>Full side by side (declared)</source>
-        <translation>전체 좌우 배치 (선언됨)</translation>
-    </message>
-    <message>
-        <source>Automatic: a stereo OpenGL context when the stack gives one, else one picture.</source>
-        <translation>자동: 시스템이 스테레오 OpenGL 컨텍스트를 제공하면 사용하고, 아니면 영상 하나만 표시합니다.</translation>
-    </message>
-    <message>
-        <source>Quad buffer: each eye in its own back buffer; the display stack packs and declares them.</source>
-        <translation>쿼드 버퍼: 각 눈을 별도의 백 버퍼에 그리고, 디스플레이 스택이 이를 나란히 묶어 선언합니다.</translation>
-    </message>
-    <message>
-        <source>Full side by side (declared): both eyes drawn side by side by the program, declared to the desktop; for stacks without a stereo context.</source>
-        <translation>전체 좌우 배치 (선언됨): 프로그램이 두 눈을 나란히 그려 데스크톱에 선언합니다. 스테레오 컨텍스트가 없는 시스템용입니다.</translation>
-    </message>
-    <message>
         <source>Active: %1</source>
         <translation>현재: %1</translation>
     </message>
@@ -58,6 +30,41 @@
     <message>
         <source>Display settings</source>
         <translation>디스플레이 설정</translation>
+    </message>
+</context>
+<context>
+    <name>StereoPathMenu</name>
+    <message>
+        <source>Stereo 3D</source>
+        <translation>스테레오 3D</translation>
+    </message>
+    <message>
+        <source>How the eyes reach the desktop</source>
+        <translation>두 눈의 영상을 데스크톱으로 보내는 방식</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>자동</translation>
+    </message>
+    <message>
+        <source>Quad buffer</source>
+        <translation>쿼드 버퍼</translation>
+    </message>
+    <message>
+        <source>Two views side by side (declared)</source>
+        <translation>두 뷰를 나란히 (선언됨)</translation>
+    </message>
+    <message>
+        <source>Automatic: a stereo OpenGL context when the stack gives one, else the two views side by side, declared.</source>
+        <translation>자동: 시스템이 스테레오 OpenGL 컨텍스트를 제공하면 사용하고, 아니면 두 뷰를 나란히 그려 선언합니다.</translation>
+    </message>
+    <message>
+        <source>Quad buffer: each eye in its own back buffer; the display stack packs and declares them.</source>
+        <translation>쿼드 버퍼: 각 눈을 별도의 백 버퍼에 그리고, 디스플레이 스택이 이를 나란히 묶어 선언합니다.</translation>
+    </message>
+    <message>
+        <source>Two views side by side (declared): both eyes drawn side by side by the program into one window and declared to the desktop; for stacks without a stereo context.</source>
+        <translation>두 뷰를 나란히 (선언됨): 프로그램이 두 눈을 한 창에 나란히 그려 데스크톱에 선언합니다. 스테레오 컨텍스트가 없는 시스템용입니다.</translation>
     </message>
 </context>
 <context>
@@ -78,7 +85,7 @@
         <translation>3D 끔: 영상 하나</translation>
     </message>
     <message>
-        <source>No stereo context: one picture, the left eye. Choose Full side by side (declared) to draw both eyes without one</source>
+        <source>No stereo context: one picture, the left eye. Choose Automatic or Two views side by side (declared) to draw both eyes without one</source>
         <translation>스테레오 컨텍스트 없음: 왼쪽 눈 영상 하나만 표시합니다. 스테레오 컨텍스트 없이 두 눈을 그리려면 전체 좌우 배치 (선언됨)를 선택하세요</translation>
     </message>
     <message>

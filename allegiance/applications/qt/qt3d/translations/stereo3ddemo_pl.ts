@@ -16,34 +16,6 @@
         <translation>Wyłączone: jeden obraz, nic nie jest zgłaszane.</translation>
     </message>
     <message>
-        <source>Stereo output</source>
-        <translation>Wyjście stereo</translation>
-    </message>
-    <message>
-        <source>Automatic</source>
-        <translation>Automatycznie</translation>
-    </message>
-    <message>
-        <source>Quad buffer</source>
-        <translation>Poczwórne buforowanie</translation>
-    </message>
-    <message>
-        <source>Full side by side (declared)</source>
-        <translation>Pełne obok siebie (zgłoszone)</translation>
-    </message>
-    <message>
-        <source>Automatic: a stereo OpenGL context when the stack gives one, else one picture.</source>
-        <translation>Automatycznie: kontekst stereo OpenGL, gdy system go daje, w przeciwnym razie jeden obraz.</translation>
-    </message>
-    <message>
-        <source>Quad buffer: each eye in its own back buffer; the display stack packs and declares them.</source>
-        <translation>Poczwórne buforowanie: każde oko w swoim buforze tylnym; warstwa wyświetlania pakuje je i zgłasza.</translation>
-    </message>
-    <message>
-        <source>Full side by side (declared): both eyes drawn side by side by the program, declared to the desktop; for stacks without a stereo context.</source>
-        <translation>Pełne obok siebie (zgłoszone): oba oczy rysowane obok siebie przez program i zgłaszane pulpitowi; dla systemów bez kontekstu stereo.</translation>
-    </message>
-    <message>
         <source>Active: %1</source>
         <translation>Aktywne: %1</translation>
     </message>
@@ -58,6 +30,41 @@
     <message>
         <source>Display settings</source>
         <translation>Ustawienia wyświetlania</translation>
+    </message>
+</context>
+<context>
+    <name>StereoPathMenu</name>
+    <message>
+        <source>Stereo 3D</source>
+        <translation>Stereo 3D</translation>
+    </message>
+    <message>
+        <source>How the eyes reach the desktop</source>
+        <translation>Jak oczy docierają do pulpitu</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>Automatycznie</translation>
+    </message>
+    <message>
+        <source>Quad buffer</source>
+        <translation>Poczwórne buforowanie</translation>
+    </message>
+    <message>
+        <source>Two views side by side (declared)</source>
+        <translation>Dwa widoki obok siebie (zgłoszone)</translation>
+    </message>
+    <message>
+        <source>Automatic: a stereo OpenGL context when the stack gives one, else the two views side by side, declared.</source>
+        <translation>Automatycznie: kontekst stereo OpenGL, gdy system go daje, w przeciwnym razie dwa widoki obok siebie, zgłoszone.</translation>
+    </message>
+    <message>
+        <source>Quad buffer: each eye in its own back buffer; the display stack packs and declares them.</source>
+        <translation>Poczwórne buforowanie: każde oko w swoim buforze tylnym; warstwa wyświetlania pakuje je i zgłasza.</translation>
+    </message>
+    <message>
+        <source>Two views side by side (declared): both eyes drawn side by side by the program into one window and declared to the desktop; for stacks without a stereo context.</source>
+        <translation>Dwa widoki obok siebie (zgłoszone): oba oczy rysowane przez program obok siebie w jednym oknie i zgłaszane pulpitowi; dla systemów bez kontekstu stereo.</translation>
     </message>
 </context>
 <context>
@@ -78,7 +85,7 @@
         <translation>3D wyłączone: jeden obraz</translation>
     </message>
     <message>
-        <source>No stereo context: one picture, the left eye. Choose Full side by side (declared) to draw both eyes without one</source>
+        <source>No stereo context: one picture, the left eye. Choose Automatic or Two views side by side (declared) to draw both eyes without one</source>
         <translation>Brak kontekstu stereo: jeden obraz, lewe oko. Wybierz Pełne obok siebie (zgłoszone), aby rysować oba oczy bez niego</translation>
     </message>
     <message>

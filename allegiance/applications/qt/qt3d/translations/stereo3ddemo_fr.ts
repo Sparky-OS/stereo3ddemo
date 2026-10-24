@@ -16,34 +16,6 @@
         <translation>Désactivé : une seule image, rien n'est déclaré.</translation>
     </message>
     <message>
-        <source>Stereo output</source>
-        <translation>Sortie stéréo</translation>
-    </message>
-    <message>
-        <source>Automatic</source>
-        <translation>Automatique</translation>
-    </message>
-    <message>
-        <source>Quad buffer</source>
-        <translation>Quad buffer</translation>
-    </message>
-    <message>
-        <source>Full side by side (declared)</source>
-        <translation>Côte à côte complet (déclaré)</translation>
-    </message>
-    <message>
-        <source>Automatic: a stereo OpenGL context when the stack gives one, else one picture.</source>
-        <translation>Automatique : un contexte OpenGL stéréo quand la pile en fournit un, sinon une seule image.</translation>
-    </message>
-    <message>
-        <source>Quad buffer: each eye in its own back buffer; the display stack packs and declares them.</source>
-        <translation>Quad buffer : chaque œil dans son propre tampon arrière ; la pile d'affichage les assemble et les déclare.</translation>
-    </message>
-    <message>
-        <source>Full side by side (declared): both eyes drawn side by side by the program, declared to the desktop; for stacks without a stereo context.</source>
-        <translation>Côte à côte complet (déclaré) : les deux yeux dessinés côte à côte par le programme et déclarés au bureau ; pour les piles sans contexte stéréo.</translation>
-    </message>
-    <message>
         <source>Active: %1</source>
         <translation>Actif : %1</translation>
     </message>
@@ -58,6 +30,41 @@
     <message>
         <source>Display settings</source>
         <translation>Paramètres d'affichage</translation>
+    </message>
+</context>
+<context>
+    <name>StereoPathMenu</name>
+    <message>
+        <source>Stereo 3D</source>
+        <translation>Stéréo 3D</translation>
+    </message>
+    <message>
+        <source>How the eyes reach the desktop</source>
+        <translation>Comment les yeux parviennent au bureau</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>Automatique</translation>
+    </message>
+    <message>
+        <source>Quad buffer</source>
+        <translation>Quad buffer</translation>
+    </message>
+    <message>
+        <source>Two views side by side (declared)</source>
+        <translation>Deux vues côte à côte (déclarées)</translation>
+    </message>
+    <message>
+        <source>Automatic: a stereo OpenGL context when the stack gives one, else the two views side by side, declared.</source>
+        <translation>Automatique : un contexte OpenGL stéréo quand la pile en fournit un, sinon les deux vues côte à côte, déclarées.</translation>
+    </message>
+    <message>
+        <source>Quad buffer: each eye in its own back buffer; the display stack packs and declares them.</source>
+        <translation>Quad buffer : chaque œil dans son propre tampon arrière ; la pile d'affichage les assemble et les déclare.</translation>
+    </message>
+    <message>
+        <source>Two views side by side (declared): both eyes drawn side by side by the program into one window and declared to the desktop; for stacks without a stereo context.</source>
+        <translation>Deux vues côte à côte (déclarées) : les deux yeux dessinés côte à côte par le programme dans une seule fenêtre et déclarés au bureau ; pour les piles sans contexte stéréo.</translation>
     </message>
 </context>
 <context>
@@ -78,7 +85,7 @@
         <translation>3D désactivée : une seule image</translation>
     </message>
     <message>
-        <source>No stereo context: one picture, the left eye. Choose Full side by side (declared) to draw both eyes without one</source>
+        <source>No stereo context: one picture, the left eye. Choose Automatic or Two views side by side (declared) to draw both eyes without one</source>
         <translation>Pas de contexte stéréo : une seule image, l'œil gauche. Choisissez Côte à côte complet (déclaré) pour dessiner les deux yeux sans contexte stéréo</translation>
     </message>
     <message>

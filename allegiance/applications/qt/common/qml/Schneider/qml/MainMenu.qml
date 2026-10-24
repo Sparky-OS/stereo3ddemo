@@ -91,6 +91,11 @@ ScrollView {
         Layout.fillWidth: true
         visible: advanced_section_title.isVisible
 
+        // How the eyes reach the desktop
+        StereoPathMenu {
+            Layout.fillWidth: true
+        }
+
         // Misc
         Pane {
             Layout.fillWidth: true

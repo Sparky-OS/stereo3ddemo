@@ -16,34 +16,6 @@
         <translation>Desligado: uma imagem, nada declarado.</translation>
     </message>
     <message>
-        <source>Stereo output</source>
-        <translation>Saída estéreo</translation>
-    </message>
-    <message>
-        <source>Automatic</source>
-        <translation>Automático</translation>
-    </message>
-    <message>
-        <source>Quad buffer</source>
-        <translation>Quad buffer</translation>
-    </message>
-    <message>
-        <source>Full side by side (declared)</source>
-        <translation>Lado a lado completo (declarado)</translation>
-    </message>
-    <message>
-        <source>Automatic: a stereo OpenGL context when the stack gives one, else one picture.</source>
-        <translation>Automático: um contexto OpenGL estéreo quando o sistema oferece um, senão uma imagem.</translation>
-    </message>
-    <message>
-        <source>Quad buffer: each eye in its own back buffer; the display stack packs and declares them.</source>
-        <translation>Quad buffer: cada olho em seu próprio back buffer; a camada de exibição os empacota e declara.</translation>
-    </message>
-    <message>
-        <source>Full side by side (declared): both eyes drawn side by side by the program, declared to the desktop; for stacks without a stereo context.</source>
-        <translation>Lado a lado completo (declarado): os dois olhos desenhados lado a lado pelo programa e declarados ao ambiente de trabalho; para sistemas sem contexto estéreo.</translation>
-    </message>
-    <message>
         <source>Active: %1</source>
         <translation>Ativo: %1</translation>
     </message>
@@ -58,6 +30,41 @@
     <message>
         <source>Display settings</source>
         <translation>Configurações de tela</translation>
+    </message>
+</context>
+<context>
+    <name>StereoPathMenu</name>
+    <message>
+        <source>Stereo 3D</source>
+        <translation>Estéreo 3D</translation>
+    </message>
+    <message>
+        <source>How the eyes reach the desktop</source>
+        <translation>Como os olhos chegam ao ambiente de trabalho</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>Automático</translation>
+    </message>
+    <message>
+        <source>Quad buffer</source>
+        <translation>Quad buffer</translation>
+    </message>
+    <message>
+        <source>Two views side by side (declared)</source>
+        <translation>Duas vistas lado a lado (declaradas)</translation>
+    </message>
+    <message>
+        <source>Automatic: a stereo OpenGL context when the stack gives one, else the two views side by side, declared.</source>
+        <translation>Automático: um contexto OpenGL estéreo quando o sistema oferece um, senão as duas vistas lado a lado, declaradas.</translation>
+    </message>
+    <message>
+        <source>Quad buffer: each eye in its own back buffer; the display stack packs and declares them.</source>
+        <translation>Quad buffer: cada olho em seu próprio back buffer; a camada de exibição os empacota e declara.</translation>
+    </message>
+    <message>
+        <source>Two views side by side (declared): both eyes drawn side by side by the program into one window and declared to the desktop; for stacks without a stereo context.</source>
+        <translation>Duas vistas lado a lado (declaradas): os dois olhos desenhados lado a lado pelo programa em uma só janela e declarados ao ambiente de trabalho; para sistemas sem contexto estéreo.</translation>
     </message>
 </context>
 <context>
@@ -78,7 +85,7 @@
         <translation>3D desligado: uma imagem</translation>
     </message>
     <message>
-        <source>No stereo context: one picture, the left eye. Choose Full side by side (declared) to draw both eyes without one</source>
+        <source>No stereo context: one picture, the left eye. Choose Automatic or Two views side by side (declared) to draw both eyes without one</source>
         <translation>Sem contexto estéreo: uma imagem, o olho esquerdo. Escolha Lado a lado completo (declarado) para desenhar os dois olhos sem ele</translation>
     </message>
     <message>
