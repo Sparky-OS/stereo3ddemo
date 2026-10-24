@@ -1,0 +1,60 @@
+Source: stereo3ddemo
+Section: graphics
+Priority: optional
+Maintainer: Daniel Ramos (Capitain Jack) <Capitain_Jack@yahoo.com>
+Build-Depends: debhelper-compat (= 13),
+               cmake,
+               doctest-dev,
+               libassimp-dev,
+               libglm-dev,
+               libspnav-dev,
+               libstereo-declare-dev,
+               libwayland-dev,
+               libx11-dev,
+               ninja-build,
+               pkgconf,
+               qt6-3d-dev,
+               qt6-base-dev,
+               qt6-base-private-dev,
+               qt6-declarative-dev,
+               qt6-l10n-tools,
+               qt6-tools-dev,
+Standards-Version: 4.7.4
+Homepage: https://github.com/Sparky-OS/stereo3ddemo
+Vcs-Browser: https://github.com/Sparky-OS/stereo3ddemo
+Vcs-Git: https://github.com/Sparky-OS/stereo3ddemo.git
+Rules-Requires-Root: no
+
+Package: stereo3ddemo
+Architecture: any
+Depends: libqt6svg6,
+         qml6-module-qt-labs-platform,
+         qml6-module-qtcore,
+         qml6-module-qtqml,
+         qml6-module-qtqml-workerscript,
+         qml6-module-qtquick,
+         qml6-module-qtquick-controls,
+         qml6-module-qtquick-dialogs,
+         qml6-module-qtquick-layouts,
+         qml6-module-qtquick-templates,
+         qml6-module-qtquick-window,
+         ${misc:Depends},
+         ${shlibs:Depends}
+Recommends: libkf6kcmutils-bin,
+            qt6-wayland
+Description: Stereo Demonstrator: 3D models in stereo, with a 3D cursor
+ The Stereo Demonstrator, by KDAB, shows 3D models (OBJ, FBX, glTF)
+ on stereo displays with a 3D cursor drawn where the mouse meets the
+ model, automatic focus over a focus area, asymmetric frusta, an eye
+ separation taken from the focus distance, pop-out and the field of
+ view from the screen's physical size.
+ .
+ This is the stereo version by Sparky Stereo OS. The 3D area is the
+ one stereo surface: a quad-buffer OpenGL context where the stack
+ gives one, or the two eyes drawn side by side and declared to the
+ desktop, which makes every screen's format from them (3D televisions,
+ anaglyph on any monitor, interleaved and frame-sequential displays,
+ two-output pairs, headsets). The side menu stays an ordinary 2D
+ surface. The program's 3D options are Enable 3D, the stereo output
+ path, the render resolution per eye and a shortcut to the display
+ settings; the demonstrator's own controls stay under Advanced.

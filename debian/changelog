@@ -1,0 +1,25 @@
+stereo3ddemo (0.3.1+git20250303.4f99a5d+dfsg+stereo3d1) unstable; urgency=medium
+
+  * The stereo version of KDAB's Stereo Demonstrator for Sparky Stereo OS,
+    from upstream master 4f99a5d (2025-03-03), on the fork's stereo3d branch.
+  * +dfsg: the 3Dconnexion SDK bundled for Windows and macOS
+    (3rdparty/3DxWare_SDK_v4-0-3_r19962) is left out of the source, as its
+    licence is not free; Linux uses libspnav.
+  * Builds on Debian's Qt 6.11 and Qt 3D with the system's Assimp, glm,
+    libspnav and doctest; KDBindings 1.1.0 vendored (MIT). The closed-engine
+    parts (Serenity, KDGui, Flutter) are off.
+  * The stereo format on the 3D window only, never the application default:
+    the side menu stays an ordinary 2D surface. Quad buffer where the stack
+    gives a stereo context; else, as a user choice, both eyes drawn side by
+    side at full size and declared through libstereo-declare; the squeezed
+    half-size fallback is gone.
+  * Enable 3D, the stereo output path, the render resolution per eye and a
+    Display settings shortcut in the side menu; the demonstrator's own
+    controls under Advanced; every setting kept between runs.
+  * Field of view from the physical screen corrected to 2 atan(H / 2D); the
+    stereo frustum as a pure function with a unit test, run at build time.
+  * Strings in en, pl, pt_BR, fr, de, ja, ko, zh_CN and zh_TW; a desktop
+    entry and an icon; the program installed as stereo3ddemo with its assets
+    under /usr/share/stereo3ddemo.
+
+ -- Daniel Ramos (Capitain Jack) <Capitain_Jack@yahoo.com>  Fri, 24 Oct 2026 04:40:00 -0300
