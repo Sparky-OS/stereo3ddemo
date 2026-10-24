@@ -96,6 +96,11 @@ ScrollView {
             Layout.fillWidth: true
         }
 
+        // Which renderer draws the 3D area
+        RendererMenu {
+            Layout.fillWidth: true
+        }
+
         // Misc
         Pane {
             Layout.fillWidth: true

@@ -7,6 +7,7 @@
 namespace {
 const auto enabledKey = QStringLiteral("stereo/enabled");
 const auto pathKey = QStringLiteral("stereo/path");
+const auto renderResolutionKey = QStringLiteral("stereo/renderResolution");
 } // namespace
 
 StereoController::StereoController(QObject* parent)
@@ -19,6 +20,12 @@ StereoController::StereoController(QObject* parent)
         m_path = Path::QuadBuffer;
     else if (path == QLatin1String("sidebyside"))
         m_path = Path::SideBySide;
+    // "WxH", or anything else for the 3D area's own size
+    const QStringList resolution = settings.value(renderResolutionKey).toString().split(QLatin1Char('x'));
+    if (resolution.size() == 2)
+        m_renderResolution = QSize(resolution[0].toInt(), resolution[1].toInt());
+    if (m_renderResolution.width() <= 0 || m_renderResolution.height() <= 0)
+        m_renderResolution = QSize();
 }
 
 bool StereoController::enabled() const
@@ -83,6 +90,48 @@ void StereoController::setEyeSize(const QSize& size)
         return;
     m_eyeSize = size;
     Q_EMIT eyeSizeChanged();
+}
+
+QSize StereoController::renderResolution() const
+{
+    return m_renderResolution;
+}
+
+void StereoController::setRenderResolution(const QSize& size)
+{
+    const QSize chosen = (size.width() > 0 && size.height() > 0) ? size : QSize();
+    if (m_renderResolution == chosen)
+        return;
+    m_renderResolution = chosen;
+    QSettings().setValue(renderResolutionKey, chosen.isValid() ? QStringLiteral("%1x%2").arg(chosen.width()).arg(chosen.height()) : QStringLiteral("area"));
+    Q_EMIT renderResolutionChanged();
+}
+
+QList<QSize> StereoController::renderResolutionSizes()
+{
+    return { QSize(), QSize(1280, 720), QSize(1920, 1080), QSize(2560, 1440), QSize(3840, 2160) };
+}
+
+QStringList StereoController::renderResolutionChoices() const
+{
+    QStringList choices;
+    for (const QSize& size : renderResolutionSizes())
+        choices << (size.isValid() ? QStringLiteral("%1 x %2").arg(size.width()).arg(size.height()) : tr("Same as the 3D area"));
+    return choices;
+}
+
+int StereoController::renderResolutionIndex() const
+{
+    const int index = renderResolutionSizes().indexOf(m_renderResolution);
+    return index < 0 ? 0 : index;
+}
+
+void StereoController::setRenderResolutionIndex(int index)
+{
+    const QList<QSize> sizes = renderResolutionSizes();
+    if (index < 0 || index >= sizes.size())
+        return;
+    setRenderResolution(sizes[index]);
 }
 
 bool StereoController::displaySettingsAvailable() const

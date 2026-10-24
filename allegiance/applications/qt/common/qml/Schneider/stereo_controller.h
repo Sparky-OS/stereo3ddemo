@@ -14,6 +14,11 @@ class StereoController : public QObject
     Q_PROPERTY(QString activePath READ activePath NOTIFY activePathChanged)
     Q_PROPERTY(bool activeStereo READ activeStereo NOTIFY activePathChanged)
     Q_PROPERTY(QSize eyeSize READ eyeSize NOTIFY eyeSizeChanged)
+    // The render resolution per eye: each eye is drawn at this size and the desktop resizes it once for the
+    // screen; an invalid size follows the 3D area
+    Q_PROPERTY(QSize renderResolution READ renderResolution WRITE setRenderResolution NOTIFY renderResolutionChanged)
+    Q_PROPERTY(QStringList renderResolutionChoices READ renderResolutionChoices CONSTANT)
+    Q_PROPERTY(int renderResolutionIndex READ renderResolutionIndex WRITE setRenderResolutionIndex NOTIFY renderResolutionChanged)
     Q_PROPERTY(bool displaySettingsAvailable READ displaySettingsAvailable CONSTANT)
 
     QML_SINGLETON
@@ -41,6 +46,13 @@ public:
 
     QSize eyeSize() const;
     void setEyeSize(const QSize& size);
+    QSize renderResolution() const;
+    void setRenderResolution(const QSize& size);
+    // The choices offered: the 3D area's own size first, then the common sizes
+    QStringList renderResolutionChoices() const;
+    int renderResolutionIndex() const;
+    void setRenderResolutionIndex(int index);
+    static QList<QSize> renderResolutionSizes();
 
     bool displaySettingsAvailable() const;
     Q_INVOKABLE void openDisplaySettings();
@@ -50,6 +62,7 @@ Q_SIGNALS:
     void pathChanged(Path);
     void activePathChanged();
     void eyeSizeChanged();
+    void renderResolutionChanged();
     // The chosen path needs another window: the application makes it.
     void restartRequested();
 
@@ -59,4 +72,5 @@ private:
     QString m_activePath;
     bool m_activeStereo = false;
     QSize m_eyeSize;
+    QSize m_renderResolution;
 };

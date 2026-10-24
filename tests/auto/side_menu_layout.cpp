@@ -35,12 +35,32 @@ private Q_SLOTS:
         QVERIFY2(descends(pathCombo, advancedSection), "the path choice belongs under Advanced");
         QVERIFY2(!descends(pathCombo, stereoSection), "the top Stereo 3D section holds no path choice");
 
-        // The top section keeps only Enable 3D, the render resolution per eye and Display settings
-        int combos = 0;
+        // The top section keeps only Enable 3D, the render resolution per eye and Display settings: its one
+        // choice is the render resolution per eye
+        QStringList combos;
+        // A Controls ComboBox is a QML type of the style ("ComboBox_QMLTYPE_..."), a QQuickComboBox underneath
         for (QObject* child : stereoSection->findChildren<QObject*>())
-            if (QByteArray(child->metaObject()->className()).startsWith("QQuickComboBox"))
-                ++combos;
-        QCOMPARE(combos, 0);
+            if (QByteArray(child->metaObject()->className()).contains("ComboBox"))
+                combos << child->objectName();
+        QCOMPARE(combos, QStringList{ QStringLiteral("eyeResolutionCombo") });
+    }
+
+    // The renderer (Qt Quick 3D with Vulkan or OpenGL, or Qt 3D) is a choice under Advanced: each gives a
+    // different picture only where the stack differs
+    void rendererChoiceIsUnderAdvanced()
+    {
+        all::qt::SideMenu menu(nullptr);
+        QQuickItem* root = menu.rootItem();
+        QVERIFY(root);
+        QObject* stereoSection = root->findChild<QObject*>(QStringLiteral("stereoSection"));
+        QObject* advancedSection = root->findChild<QObject*>(QStringLiteral("advancedSection"));
+        QObject* rendererCombo = root->findChild<QObject*>(QStringLiteral("rendererCombo"));
+        QVERIFY(stereoSection);
+        QVERIFY(advancedSection);
+        QVERIFY2(rendererCombo, "the renderer choice exists");
+        QVERIFY2(descends(rendererCombo, advancedSection), "the renderer choice belongs under Advanced");
+        QVERIFY2(!descends(rendererCombo, stereoSection), "the top Stereo 3D section holds no renderer choice");
+        QCOMPARE(rendererCombo->property("count").toInt(), 3);
     }
 
     // Every label of the top section wraps: a longer language (Brazilian Portuguese's "Resolução de renderização

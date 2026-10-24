@@ -15,6 +15,8 @@ qt_add_qml_module(
     misc_controller.cpp
     stereo_controller.h
     stereo_controller.cpp
+    renderer_controller.h
+    renderer_controller.cpp
     style.h
     QML_FILES
     "qml/ButtonX.qml"
@@ -31,6 +33,7 @@ qt_add_qml_module(
     "qml/MiscMenu.qml"
     "qml/StereoMenu.qml"
     "qml/StereoPathMenu.qml"
+    "qml/RendererMenu.qml"
     RESOURCES
     "qml/checked.svg"
     "qml/unchecked.svg"

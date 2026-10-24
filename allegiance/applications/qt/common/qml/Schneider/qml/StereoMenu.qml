@@ -39,12 +39,28 @@ ColumnLayout {
         text: qsTr("Render resolution per eye: %1 x %2").arg(Stereo.eyeSize.width).arg(Stereo.eyeSize.height)
         font: Style.fontDefault
         ToolTip.visible: labelMa.containsMouse
-        ToolTip.text: qsTr("Each eye is drawn at the 3D area's size; the desktop resizes it once for each screen.")
+        ToolTip.text: qsTr("Each eye is drawn at this size; the desktop resizes it once for each screen.")
         MouseArea {
             id: labelMa
             anchors.fill: parent
             hoverEnabled: true
         }
+    }
+
+    // The one choice of the program's 3D options: the size each eye is drawn at
+    ComboBox {
+        objectName: "eyeResolutionCombo"
+        Layout.fillWidth: true
+        visible: Stereo.activeStereo
+        model: Stereo.renderResolutionChoices
+        currentIndex: Stereo.renderResolutionIndex
+        onCurrentIndexChanged: {
+            if (currentIndex !== -1 && Stereo.renderResolutionIndex != currentIndex) {
+                Stereo.renderResolutionIndex = currentIndex;
+            }
+        }
+        ToolTip.visible: hovered
+        ToolTip.text: qsTr("Above the 3D area's size the picture is supersampled; below it costs less. The desktop resizes it once.")
     }
 
     ButtonX {
