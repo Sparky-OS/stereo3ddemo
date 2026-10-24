@@ -14,6 +14,10 @@ stereo3ddemo (0.3.1+git20250303.4f99a5d+dfsg+stereo3d3) unstable; urgency=medium
     (qt6-base +stereo3d11), so the desktop shows it in 3D.
   * Depends on Qt Quick 3D and the edition's Qt Quick; recommends the
     stereo Vulkan layer for drivers outside Mesa.
+  * Restore saved cursor shape and visibility at startup, preserve its
+    displayed size when changing the eye raster, and apply the selected
+    tint to the cross cursor. Covered by quick3d_renderer_test.
+  * Require the SVG image plugin for the demonstrator's Schneider logo.
 
  -- Daniel Ramos (Capitain Jack) <Capitain_Jack@yahoo.com>  Sat, 24 Oct 2026 17:10:00 -0300
 

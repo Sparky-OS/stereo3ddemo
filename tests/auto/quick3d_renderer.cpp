@@ -18,6 +18,7 @@
 #include <QQuickItem>
 #include <QSettings>
 #include <QTemporaryDir>
+#include <QQmlListReference>
 #include <QtQml/qqmlextensionplugin.h>
 
 // The renderer's QML module is static
@@ -132,6 +133,23 @@ private Q_SLOTS:
         scene.window.setProperty("_q_stereo_view_size", QSize(772, 540));
         const float smallerViewScale = scene.renderer->sceneItem()->property("cursorScale").toFloat();
         QVERIFY(smallerViewScale > original * 1.99f && smallerViewScale < original * 2.01f);
+    }
+
+    void crossCursorUsesTheSelectedTint()
+    {
+        Scene scene(all::StereoPath::QuadBuffer);
+        auto* cross = scene.renderer->sceneItem()->findChild<QObject*>(QStringLiteral("cursorCross"));
+        QVERIFY(cross);
+        int models = 0;
+        scene.renderer->propertyChanged("cursor_color", std::array<float, 4>{ 0.0f, 1.0f, 1.0f, 1.0f });
+        for (QObject* child : cross->children()) {
+            QQmlListReference materials(child, "materials");
+            if (materials.count() == 0)
+                continue;
+            QCOMPARE(materials.at(0)->property("baseColor").value<QColor>(), QColor(Qt::cyan));
+            ++models;
+        }
+        QCOMPARE(models, 3);
     }
 
     void eyeCamerasAreTheSharedOffAxisFrusta()

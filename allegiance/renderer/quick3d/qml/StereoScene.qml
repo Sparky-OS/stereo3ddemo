@@ -126,7 +126,7 @@ Item {
         }
         PrincipledMaterial {
             id: crossMaterial
-            baseColor: "lightyellow"
+            baseColor: root.cursorColor
             roughness: 0.2
         }
 

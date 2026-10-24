@@ -30,6 +30,7 @@ Rules-Requires-Root: no
 Package: stereo3ddemo
 Architecture: any
 Depends: libqt6svg6,
+         qt6-svg-plugins,
          libqt6waylandclient6 (>= 6.11.2+dfsg-5+stereo3d11),
          libqt63dextras6 (>= 6.11.2+dfsg-2+stereo3d1),
          libqt63drender6 (>= 6.11.2+dfsg-2+stereo3d1),

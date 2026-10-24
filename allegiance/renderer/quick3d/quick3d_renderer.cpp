@@ -232,6 +232,7 @@ bool Quick3DRenderer::eventFilter(QObject* watched, QEvent* event)
                 setCurrentEye(eye - 1);
         } else if (change->propertyName() == "_q_stereo_view_size") {
             m_focusArea->setViewSize(QSizeF(eyeSize()));
+            updateCursorSize();
         }
     }
     return QObject::eventFilter(watched, event);
@@ -411,7 +412,7 @@ void Quick3DRenderer::updateCursorSize()
     const QVector3D cameraPosition = m_centerPlaced.position;
     const float distance = (m_cursorPosition - cameraPosition).length();
     const float fov = 2.0f * std::atan(1.0f / std::max(m_centerPlaced.projection(0, 0), 1e-4f));
-    const int viewWidth = std::max(eyeSize().width(), 1);
+    const int viewWidth = std::max(displaySize().width(), 1);
     const float pixelsToAngle = fov / float(viewWidth);
     const float radius = distance * std::tan(targetPixels * pixelsToAngle * 0.5f);
     const float scale = m_cursorScaleFactor * (m_cursorScalingEnabled ? radius : cursorSize);
