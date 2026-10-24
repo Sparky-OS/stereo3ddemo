@@ -87,6 +87,7 @@ ScrollView {
         }
 
         ColumnLayout {
+        objectName: "advancedSection"
         Layout.fillWidth: true
         visible: advanced_section_title.isVisible
 

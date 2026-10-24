@@ -5,6 +5,7 @@ import Schneider
 
 ColumnLayout {
     id: stereo_menu
+    objectName: "stereoSection"
 
     function join(textStrs)
     {
@@ -33,6 +34,7 @@ ColumnLayout {
             font: Style.fontDefault
         }
         ComboBox {
+            objectName: "stereoPathCombo"
             Layout.fillWidth: true
             model: [
                 { value: Stereo.Path.Automatic, text: qsTr("Automatic") },

@@ -68,6 +68,7 @@ public:
     inline AppStyle* appStyle() const { return m_appStyle; }
 
     inline QQmlEngine* qmlEngine() const { return m_engine; }
+    inline QQuickItem* rootItem() const { return m_quickWidget->rootObject(); }
 
     bool onKeyPress(QKeyEvent* e)
     {
