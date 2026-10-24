@@ -1,5 +1,7 @@
 # Stereo Demonstrator
 
+This is the stereo version of Stereo Demonstrator by Sparky Stereo OS, forked from [KDABLabs/stereo3ddemo](https://github.com/KDABLabs/stereo3ddemo).
+
 The Stereo Demonstrator provides demo applications to experiment with
 stereo rendering on stereo capable displays from [Schneider Digital](https://www.schneider-digital.com/en/)
 
@@ -97,3 +99,22 @@ to the Qt Project. We can give advanced or standard trainings anywhere
 around the globe on Qt as well as C++, OpenGL, 3D and more.
 
 Please visit <https://www.kdab.com> to meet the people who write code like this.
+
+## Sparky Stereo OS
+
+This fork is the Stereo Demonstrator as [Sparky Stereo OS](https://github.com/Sparky-OS/sparky-stereo-os) ships it, on its `stereo3d` branch.
+It keeps everything the demonstrator does and changes how the picture reaches the screen, because on that desktop the compositor, Stereo KWin, does the display work:
+
+- The 3D area is the one stereo surface. The stereo surface format is set on the Qt3D window only, never as the application's default format, so the side menu and the dialogs stay ordinary 2D surfaces, identical in both eyes.
+- Full side by side, declared once. With a quad-buffer OpenGL context the edition's Mesa packs the two eyes and declares the surface at the swap, as before. Without one, the demonstrator no longer squeezes each eye into a quarter of the window: as a user option it draws the two eyes side by side, each at the 3D area's resolution, into a window twice as wide and declares it through [libstereo-declare](https://github.com/Sparky-OS/libstereo-declare); Stereo KWin shows it at one view's size and makes every screen's format from it (3D televisions, anaglyph on any monitor, interleaved and frame-sequential displays, two-output pairs, headsets). Otherwise it runs mono.
+- The program's 3D options are those of every program on the edition: Enable 3D, the render resolution per eye and a shortcut to Display Settings. The demonstrator's own teaching controls stay, under Advanced.
+- Two fixes found while reading the code: the field of view from the physical screen is `2·atan(H/(2D))`, and the off-axis frustum is a pure function with a unit test.
+- Builds on Debian's Qt 6.11 and Qt 3D with the system's Assimp, glm, libspnav and doctest; KDBindings 1.1.0 is vendored under `3rdparty/KDBindings` (MIT). The closed-engine parts (Serenity, KDGui, Flutter) are off by default on Linux.
+- Strings added by the edition come in English, Polish, Brazilian Portuguese, French, German, Japanese, Korean and Chinese (Simplified and Traditional).
+
+The edition's documentation explains the design: [how it works](https://github.com/Sparky-OS/sparky-stereo-os/blob/main/docs/how-it-works.md).
+
+The Stereo Demonstrator was written by KDAB for the stereo displays of Schneider Digital, and their logos in the About page credit them.
+The licence is unchanged, GPL-3.0.
+
+Sparky Stereo OS, Daniel Ramos's edition of SparkyLinux (by Paweł "pavroo" Pijanowski).
