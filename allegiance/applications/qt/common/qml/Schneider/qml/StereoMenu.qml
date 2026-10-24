@@ -34,6 +34,7 @@ ColumnLayout {
 
     Label {
         Layout.fillWidth: true
+        wrapMode: Text.WordWrap
         visible: Stereo.activeStereo
         text: qsTr("Render resolution per eye: %1 x %2").arg(Stereo.eyeSize.width).arg(Stereo.eyeSize.height)
         font: Style.fontDefault

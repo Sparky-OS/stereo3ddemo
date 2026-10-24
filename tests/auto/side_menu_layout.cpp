@@ -42,6 +42,29 @@ private Q_SLOTS:
                 ++combos;
         QCOMPARE(combos, 0);
     }
+
+    // Every label of the top section wraps: a longer language (Brazilian Portuguese's "Resolução de renderização
+    // por olho: 1544 x 1080") is not cut at the menu's width
+    void stereoSectionLabelsWrap()
+    {
+        all::qt::SideMenu menu(nullptr);
+        QQuickItem* root = menu.rootItem();
+        QVERIFY(root);
+        QObject* stereoSection = root->findChild<QObject*>(QStringLiteral("stereoSection"));
+        QVERIFY(stereoSection);
+        int labels = 0;
+        // The section's own labels (a control's inner label is the control's); a Controls Label is a QML type of
+        // the style ("Label_QMLTYPE_..."), a QQuickLabel underneath
+        for (QObject* child : stereoSection->children()) {
+            const QByteArray className = child->metaObject()->className();
+            if (!className.startsWith("Label_") && !className.startsWith("QQuickLabel"))
+                continue;
+            ++labels;
+            const QString text = child->property("text").toString();
+            QVERIFY2(child->property("wrapMode").toInt() != 0, qPrintable(QStringLiteral("label does not wrap: ") + text));
+        }
+        QVERIFY2(labels >= 2, "the section's labels were found");
+    }
 };
 
 QTEST_MAIN(SideMenuLayout)
