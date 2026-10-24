@@ -64,6 +64,7 @@ target_sources(
            "include/shared/spacemouse.h"
            "include/shared/cursor.h"
            "include/shared/stereo_camera.h"
+           "include/shared/stereo_frustum.h"
     PRIVATE ${VAR_SRCS_PRIVATE}
            "src/stereo_camera.cpp"
 )

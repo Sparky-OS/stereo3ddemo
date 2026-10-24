@@ -1,5 +1,7 @@
 #include "camera_controller.h"
 
+#include <shared/stereo_frustum.h>
+
 CameraController::CameraController(QObject* parent)
     : QObject(parent)
 {
@@ -185,11 +187,7 @@ void CameraController::setFovByPhysicalDim(bool newFovByPhysicalDim)
 
 void CameraController::updateFovFromDims()
 {
-    // We have distance to screen and screen height
-    // Given tan = opposite / adjacent <==> screen height / distance
-    // we can compute the vfov as 2 * atan(screen height / distance)
-    const float vFov = 2.0f * qRadiansToDegrees(atan(screenHeight() / viewerDistance()));
-    setFov(vFov);
+    setFov(all::fovFromPhysical(screenHeight(), viewerDistance()));
 }
 
 bool CameraController::showFocusPlane() const
