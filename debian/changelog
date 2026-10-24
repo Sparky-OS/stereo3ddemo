@@ -1,3 +1,22 @@
+stereo3ddemo (0.3.1+git20250303.4f99a5d+dfsg+stereo3d3) unstable; urgency=medium
+
+  * Phase 2: the Qt Quick 3D renderer. The 3D area is a Qt Quick window
+    drawn by Qt Quick 3D, each eye by the edition's Qt Quick into its own
+    target: Vulkan by default (the two-layer swapchain packed by the
+    display stack), OpenGL as an option, the original Qt 3D renderer kept
+    as the third choice ("Renderer", under Advanced; applies at the next
+    start).
+  * The render resolution per eye is a real setting, as a height (720,
+    1080, 1440 or 2160 lines, or the 3D area's own size): each eye is
+    drawn at that size and the desktop resizes it once (qt6-base
+    +stereo3d10's _q_stereo_view_size); the pointer follows.
+  * The quad-buffer window on OpenGL says its pair is 3D content
+    (qt6-base +stereo3d11), so the desktop shows it in 3D.
+  * Depends on Qt Quick 3D and the edition's Qt Quick; recommends the
+    stereo Vulkan layer for drivers outside Mesa.
+
+ -- Daniel Ramos (Capitain Jack) <Capitain_Jack@yahoo.com>  Sat, 24 Oct 2026 17:10:00 -0300
+
 stereo3ddemo (0.3.1+git20250303.4f99a5d+dfsg+stereo3d2) unstable; urgency=medium
 
   * The two views side by side path goes through the platform: the 3D

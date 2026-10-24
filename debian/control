@@ -18,6 +18,8 @@ Build-Depends: debhelper-compat (= 13),
                qt6-base-private-dev,
                qt6-declarative-dev,
                qt6-l10n-tools,
+               qt6-quick3d-dev,
+               qt6-quick3d-private-dev,
                qt6-tools-dev,
 Standards-Version: 4.7.4
 Homepage: https://github.com/Sparky-OS/stereo3ddemo
@@ -28,9 +30,13 @@ Rules-Requires-Root: no
 Package: stereo3ddemo
 Architecture: any
 Depends: libqt6svg6,
-         libqt6waylandclient6 (>= 6.11.2+dfsg-5+stereo3d9),
+         libqt6waylandclient6 (>= 6.11.2+dfsg-5+stereo3d11),
          libqt63dextras6 (>= 6.11.2+dfsg-2+stereo3d1),
          libqt63drender6 (>= 6.11.2+dfsg-2+stereo3d1),
+         libqt6quick6 (>= 6.11.2+dfsg-3+stereo3d1),
+         qml6-module-qtquick3d,
+         qml6-module-qtquick3d-assetutils,
+         qt6-quick3d-assetimporters-plugin,
          qml6-module-qt-labs-platform,
          qml6-module-qtcore,
          qml6-module-qtqml,
@@ -43,7 +49,7 @@ Depends: libqt6svg6,
          qml6-module-qtquick-window,
          ${misc:Depends},
          ${shlibs:Depends}
-Recommends: libkf6kcmutils-bin,
+Recommends: mesa-vulkan-layer-stereo, libkf6kcmutils-bin,
             qt6-wayland
 Description: Stereo Demonstrator: 3D models in stereo, with a 3D cursor
  The Stereo Demonstrator, by KDAB, shows 3D models (OBJ, FBX, glTF)
