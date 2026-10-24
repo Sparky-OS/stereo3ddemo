@@ -1,20 +1,21 @@
 project(shared)
 
-# Assimp library
-FetchContent_Declare(
-    assimp
-    GIT_REPOSITORY https://github.com/assimp/assimp.git
-    GIT_TAG master
-)
-set(ASSIMP_WARNINGS_AS_ERRORS OFF)
-set(ASSIMP_BUILD_TESTS OFF)
-set(ASSIMP_BUILD_IFC_IMPORTER OFF)
-set(ASSIMP_BUILD_USE_CCACHE OFF)
-set(BUILD_SHARED_LIBS OFF)
-FetchContent_MakeAvailable(assimp)
+# Assimp library: fetched and built in when the system has none (looked for by the top-level CMakeLists.txt)
+if(NOT TARGET assimp::assimp)
+    FetchContent_Declare(
+        assimp
+        GIT_REPOSITORY https://github.com/assimp/assimp.git
+        GIT_TAG master
+    )
+    set(ASSIMP_WARNINGS_AS_ERRORS OFF)
+    set(ASSIMP_BUILD_TESTS OFF)
+    set(ASSIMP_BUILD_IFC_IMPORTER OFF)
+    set(ASSIMP_BUILD_USE_CCACHE OFF)
+    set(BUILD_SHARED_LIBS OFF)
+    FetchContent_MakeAvailable(assimp)
+endif()
 
-# KDBindings library
-find_package(KDBindings QUIET)
+# KDBindings library: fetched when neither the system nor 3rdparty has it (looked for by the top-level CMakeLists.txt)
 if(NOT TARGET KDAB::KDBindings)
     fetchcontent_declare(
         KDBindings

@@ -29,9 +29,16 @@ cmake_dependent_option(
     OFF
 )
 
-option(BUILD_KDGUI_UI "Build KDGui UI" ON)
+# The Serenity renderer, the KDGui UI and the Flutter UI need KDAB's Serenity engine, which is not public;
+# on Linux they are off unless asked for.
+if(WIN32 OR APPLE)
+    set(ALLEGIANCE_CLOSED_PARTS_DEFAULT ON)
+else()
+    set(ALLEGIANCE_CLOSED_PARTS_DEFAULT OFF)
+endif()
+option(BUILD_KDGUI_UI "Build KDGui UI" ${ALLEGIANCE_CLOSED_PARTS_DEFAULT})
 
-option(BUILD_SERENITY_RENDERER "Build Serenity renderer" ON)
+option(BUILD_SERENITY_RENDERER "Build Serenity renderer" ${ALLEGIANCE_CLOSED_PARTS_DEFAULT})
 cmake_dependent_option(
     BUILD_FLUTTER_UI
     "Build Flutter UI"
@@ -58,6 +65,9 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # Projects
 find_package(glm)
+if(glm_FOUND AND NOT TARGET glm::glm AND TARGET glm)
+    add_library(glm::glm ALIAS glm)
+endif()
 if(NOT glm_FOUND AND NOT BUILD_SERENITY_RENDERER)
     FetchContent_Declare(
         glm
@@ -65,6 +75,14 @@ if(NOT glm_FOUND AND NOT BUILD_SERENITY_RENDERER)
         GIT_TAG master
     )
     FetchContent_MakeAvailable(glm)
+endif()
+
+# Assimp and KDBindings: the system's packages when it has them (found here so every directory sees the
+# targets), else the copy under 3rdparty for KDBindings, else fetched by shared/
+find_package(assimp QUIET)
+find_package(KDBindings QUIET)
+if(NOT TARGET KDAB::KDBindings AND EXISTS ${CMAKE_SOURCE_DIR}/3rdparty/KDBindings/CMakeLists.txt)
+    add_subdirectory(3rdparty/KDBindings)
 endif()
 
 set(BUILD_SERENITY_RENDERER_QT ${BUILD_SERENITY_RENDERER})
