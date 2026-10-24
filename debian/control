@@ -28,6 +28,7 @@ Rules-Requires-Root: no
 Package: stereo3ddemo
 Architecture: any
 Depends: libqt6svg6,
+         libqt6waylandclient6 (>= 6.11.2+dfsg-5+stereo3d9),
          qml6-module-qt-labs-platform,
          qml6-module-qtcore,
          qml6-module-qtqml,

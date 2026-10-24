@@ -26,13 +26,6 @@ int main(int argc, char** argv)
 
     QCoreApplication::setOrganizationName(QStringLiteral("stereo3ddemo"));
     QCoreApplication::setApplicationName(QStringLiteral("stereo3ddemo"));
-    if (all::qt::sideBySideChosen()) {
-        // Qt gives every Wayland window a viewport the size of the window, and the desktop takes a declared
-        // surface's viewport as the size of one view. A window that draws both views side by side itself
-        // must have none, so Qt's viewporter is left unbound for the whole program (integer scales only).
-        if (!qEnvironmentVariableIsSet("QT_WAYLAND_DISABLED_INTERFACES"))
-            qputenv("QT_WAYLAND_DISABLED_INTERFACES", "wp_viewporter,wp_fractional_scale_manager_v1");
-    }
 
     QApplication app(argc, argv);
     QApplication::setApplicationDisplayName(QStringLiteral("Stereo Demonstrator - " ALLEGIANCE_BUILD_STR));
@@ -103,7 +96,7 @@ int main(int argc, char** argv)
             path = all::StereoPath::Off;
         else if (quadBuffer)
             path = all::StereoPath::QuadBuffer;
-        else if (choice != StereoController::Path::QuadBuffer && all::qt::sideBySidePossible())
+        else if (choice != StereoController::Path::QuadBuffer && all::qt::stereoDeclarationSupported())
             path = all::StereoPath::SideBySide;
         else
             path = all::StereoPath::Unavailable;
@@ -123,8 +116,8 @@ int main(int argc, char** argv)
             description = QCoreApplication::translate("main", "3D off: one picture");
             break;
         case all::StereoPath::Unavailable:
-            if (all::qt::stereoDeclarationSupported() && choice != StereoController::Path::SideBySide)
-                description = QCoreApplication::translate("main", "No stereo context: one picture, the left eye. Choose Full side by side (declared) to draw both eyes without one");
+            if (all::qt::stereoDeclarationSupported())
+                description = QCoreApplication::translate("main", "No stereo context: one picture, the left eye. Choose Automatic or Two views side by side (declared) to draw both eyes without one");
             else
                 description = QCoreApplication::translate("main", "No stereo path on this desktop: one picture, the left eye");
             break;

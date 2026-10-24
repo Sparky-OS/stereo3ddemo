@@ -15,11 +15,6 @@ const char* stereoPathName(all::StereoPath path);
 
 // Whether the desktop takes a full side by side declaration (Stereo KWin, on Wayland or X11).
 bool stereoDeclarationSupported();
-// Whether the saved 3D options ask for the side by side path (read before the application exists).
-bool sideBySideChosen();
-// Whether a window of this program can be shown as two views side by side: the desktop takes declarations
-// and, on Wayland, Qt gives the window no viewport of its own.
-bool sideBySidePossible();
 // Called once on the GUI thread after QGuiApplication exists; connects the declaration library on Wayland.
 void initStereoDeclaration();
 

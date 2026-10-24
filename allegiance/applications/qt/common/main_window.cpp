@@ -29,6 +29,10 @@ void MainWindow::setEmbeddedWindow(QWindow* embeddedWindow)
 void MainWindow::setEmbeddedViews(int views)
 {
     m_embeddedViews = views;
+    // The platform shows a window that holds its views side by side at one view's width (Sparky Stereo OS's
+    // Qt, _q_stereo_side_by_side_views); read when the window's geometry changes, which follows
+    if (m_embeddedWindow)
+        m_embeddedWindow->setProperty("_q_stereo_side_by_side_views", views > 1 ? QVariant(views) : QVariant());
     applyEmbeddedGeometry();
 }
 

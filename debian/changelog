@@ -1,3 +1,20 @@
+stereo3ddemo (0.3.1+git20250303.4f99a5d+dfsg+stereo3d2) unstable; urgency=medium
+
+  * The two views side by side path goes through the platform: the 3D
+    window says it holds two views side by side (Qt's
+    _q_stereo_side_by_side_views, qt6-base +stereo3d9), so its viewport is
+    one view wide and fractional scales work again; Qt's viewporter is no
+    longer left unbound, and Automatic falls back to it when the stack
+    gives no stereo context.
+  * The route the eyes take to the desktop is a choice under Advanced,
+    "How the eyes reach the desktop"; the top Stereo 3D section keeps
+    Enable 3D, the render resolution per eye and Display settings. A
+    layout test checks it.
+  * Quad buffer on X11 needs qt6-3d +stereo3d1 (the renderer's context
+    follows the window's format).
+
+ -- Daniel Ramos (Capitain Jack) <Capitain_Jack@yahoo.com>  Sat, 24 Oct 2026 04:47:41 -0300
+
 stereo3ddemo (0.3.1+git20250303.4f99a5d+dfsg+stereo3d1) unstable; urgency=medium
 
   * The stereo version of KDAB's Stereo Demonstrator for Sparky Stereo OS,

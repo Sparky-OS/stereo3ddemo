@@ -2,7 +2,6 @@
 
 #include <QEvent>
 #include <QGuiApplication>
-#include <QSettings>
 #include <QPlatformSurfaceEvent>
 #include <QWindow>
 #include <qpa/qplatformnativeinterface.h>
@@ -89,23 +88,6 @@ void initStereoDeclaration()
     wl_display_roundtrip(wayland->display());
     qCDebug(lcStereo) << "declaration library" << Qt::hex << stereo_declare_version() << Qt::dec << "init" << r << "supported" << stereo_supported_wayland();
 #endif
-}
-
-bool sideBySideChosen()
-{
-    QSettings settings;
-    return settings.value(QStringLiteral("stereo/enabled"), true).toBool()
-            && settings.value(QStringLiteral("stereo/path")).toString() == QLatin1String("sidebyside");
-}
-
-bool sideBySidePossible()
-{
-    if (!stereoDeclarationSupported())
-        return false;
-    if (!isWayland())
-        return true;
-    const QByteArray disabled = qgetenv("QT_WAYLAND_DISABLED_INTERFACES");
-    return disabled.contains("wp_viewporter");
 }
 
 bool stereoDeclarationSupported()
