@@ -22,6 +22,11 @@ add_library(
 )
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC ALLEGIANCE_QT3D QT_NO_KEYWORDS)
+if(ALLEGIANCE_DESKTOP_INSTALL)
+    # The bundled assets' installed place, for the default model when the working folder has none
+    include(GNUInstallDirs)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE ALLEGIANCE_DATADIR="${CMAKE_INSTALL_FULL_DATADIR}/stereo3ddemo")
+endif()
 
 target_include_directories(
     ${PROJECT_NAME}

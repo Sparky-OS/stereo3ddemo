@@ -449,6 +449,11 @@ void Qt3DRenderer::loadModel(std::filesystem::path path)
     m_userEntity->setObjectName("UserEntity");
 
     QString filePath = QString::fromStdString(path.string());
+#ifdef ALLEGIANCE_DATADIR
+    // The bundled assets live next to the program when run from its build folder, else in the data folder
+    if (path.is_relative() && !std::filesystem::exists(path) && std::filesystem::exists(std::filesystem::path(ALLEGIANCE_DATADIR) / path))
+        filePath = QString::fromStdString((std::filesystem::path(ALLEGIANCE_DATADIR) / path).string());
+#endif
     bool isFbx = filePath.endsWith(".fbx");
 
     auto* sceneRoot = MeshLoader::load(filePath);

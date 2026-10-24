@@ -87,8 +87,18 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/assets ${CMAKE_BINARY_DIR}/assets
 )
 
-install(
-    DIRECTORY ${CMAKE_SOURCE_DIR}/assets
-    DESTINATION ${CMAKE_INSTALL_BINDIR}/
-    COMPONENT applications
-)
+if(ALLEGIANCE_DESKTOP_INSTALL)
+    include(GNUInstallDirs)
+    install(
+        DIRECTORY ${CMAKE_SOURCE_DIR}/assets
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/stereo3ddemo
+        COMPONENT applications
+        PATTERN "resources.qrc" EXCLUDE
+    )
+else()
+    install(
+        DIRECTORY ${CMAKE_SOURCE_DIR}/assets
+        DESTINATION ${CMAKE_INSTALL_BINDIR}/
+        COMPONENT applications
+    )
+endif()

@@ -61,6 +61,15 @@ else()
     )
 endif()
 
+# A desktop installation under a plain name: the program as stereo3ddemo, its assets in the data folder, a
+# desktop entry and an icon. Off keeps the build folder layout (assets next to the program).
+if(UNIX AND NOT APPLE)
+    set(ALLEGIANCE_DESKTOP_INSTALL_DEFAULT ON)
+else()
+    set(ALLEGIANCE_DESKTOP_INSTALL_DEFAULT OFF)
+endif()
+option(ALLEGIANCE_DESKTOP_INSTALL "Install as stereo3ddemo with a desktop entry, assets in the data folder" ${ALLEGIANCE_DESKTOP_INSTALL_DEFAULT})
+
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # Projects

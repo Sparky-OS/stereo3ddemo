@@ -1,5 +1,6 @@
 #include <QApplication>
 #include <QCommandLineParser>
+#include <QTranslator>
 #include <Qt3DExtras/Qt3DWindow>
 
 #include <applications/qt/common/renderer_initializer.h>
@@ -37,11 +38,17 @@ int main(int argc, char** argv)
     QApplication::setApplicationDisplayName(QStringLiteral("Stereo Demonstrator - " ALLEGIANCE_BUILD_STR));
     QApplication::setApplicationVersion(QStringLiteral(ALLEGIANCE_PROJECT_VERSION));
 
+#ifdef ALLEGIANCE_TRANSLATIONS
+    QTranslator translator;
+    if (translator.load(QLocale(), QStringLiteral("stereo3ddemo"), QStringLiteral("_"), QStringLiteral(":/i18n")))
+        app.installTranslator(&translator);
+#endif
+
     QCommandLineParser parser;
-    parser.setApplicationDescription(QStringLiteral("Stereo Demonstrator: a model viewer for stereo displays, with a 3D cursor"));
+    parser.setApplicationDescription(QCoreApplication::translate("main", "Stereo Demonstrator: a model viewer for stereo displays, with a 3D cursor"));
     parser.addHelpOption();
     parser.addVersionOption();
-    parser.addPositionalArgument(QStringLiteral("model"), QStringLiteral("A model file to open (.obj, .fbx, .gltf, .glb)"), QStringLiteral("[model]"));
+    parser.addPositionalArgument(QStringLiteral("model"), QCoreApplication::translate("main", "A model file to open (.obj, .fbx, .gltf, .glb)"), QStringLiteral("[model]"));
     parser.process(app);
     const std::filesystem::path initialModel = parser.positionalArguments().isEmpty() ? std::filesystem::path() : std::filesystem::path(parser.positionalArguments().first().toStdString());
 
