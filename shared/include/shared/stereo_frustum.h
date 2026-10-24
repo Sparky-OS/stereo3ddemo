@@ -7,11 +7,11 @@
 namespace all {
 
 // The vertical field of view, in degrees, of a screen of height screenHeight seen from viewerDistance
-// (both in the same unit). Given tan = opposite / adjacent <==> screen height / distance
-// we can compute the vfov as 2 * atan(screen height / distance)
+// (both in the same unit): the angle the screen subtends. Half the height over the distance is the
+// tangent of half the angle, so the field of view is 2 atan(H / 2D).
 inline float fovFromPhysical(float screenHeight, float viewerDistance)
 {
-    return glm::degrees(2.0f * std::atan(screenHeight / viewerDistance));
+    return glm::degrees(2.0f * std::atan(screenHeight / (2.0f * viewerDistance)));
 }
 
 struct StereoFrustumParameters {
