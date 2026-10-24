@@ -3,6 +3,8 @@
 #include <renderer/quick3d/quick3d_renderer.h>
 #include <shared/stereo_camera.h>
 #include <shared/stereo_frustum.h>
+#include <applications/qt/common/main_window.h>
+#include <applications/qt/common/renderer_initializer.h>
 
 // Qt Quick 3D's private headers spell the Qt keywords, which the renderer's build turns off
 #define signals public
@@ -13,6 +15,9 @@
 
 #include <QGuiApplication>
 #include <QQuickWindow>
+#include <QQuickItem>
+#include <QSettings>
+#include <QTemporaryDir>
 #include <QtQml/qqmlextensionplugin.h>
 
 // The renderer's QML module is static
@@ -29,6 +34,7 @@ Q_IMPORT_QML_PLUGIN(Stereo3D_Quick3DPlugin)
 class Quick3DRendererTest : public QObject
 {
     Q_OBJECT
+    QTemporaryDir m_settingsDir;
 
     static QMatrix4x4 fromGlm(const glm::mat4& m)
     {
@@ -72,6 +78,62 @@ class Quick3DRendererTest : public QObject
     };
 
 private Q_SLOTS:
+    void initTestCase()
+    {
+        QVERIFY(m_settingsDir.isValid());
+        QCoreApplication::setOrganizationName(QStringLiteral("stereo3ddemo-tests"));
+        QCoreApplication::setApplicationName(QStringLiteral("quick3d-renderer"));
+        QSettings::setDefaultFormat(QSettings::IniFormat);
+        QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, m_settingsDir.path());
+    }
+
+    void cleanup()
+    {
+        QSettings().clear();
+    }
+
+    void savedCursorOptionsReachRenderer_data()
+    {
+        QTest::addColumn<int>("type");
+        QTest::addColumn<int>("mode");
+        for (int type = 0; type < 4; ++type)
+            for (int mode = 0; mode < 3; ++mode)
+                QTest::newRow(qPrintable(QStringLiteral("type-%1-mode-%2").arg(type).arg(mode))) << type << mode;
+    }
+
+    void savedCursorOptionsReachRenderer()
+    {
+        QFETCH(int, type);
+        QFETCH(int, mode);
+        QSettings().setValue(QStringLiteral("cursor/type"), type);
+        QSettings().setValue(QStringLiteral("cursor/displayMode"), mode);
+        all::qt::MainWindow mainWindow(QSize(1544, 1080));
+        auto* view = new QQuickWindow;
+        mainWindow.setEmbeddedWindow(view);
+        all::qt::RendererInitializer<QQuickWindow, all::quick3d::Quick3DRenderer> initializer(&mainWindow, view);
+        QQuickItem* scene = nullptr;
+        for (QQuickItem* child : view->contentItem()->childItems())
+            if (child->objectName() == QStringLiteral("stereoScene"))
+                scene = child;
+        QVERIFY(scene);
+        QCOMPARE(scene->property("cursorType").toInt(), type);
+        QCOMPARE(scene->property("cursorVisible").toBool(), mode != int(all::CursorDisplayMode::SystemCursorOnly));
+    }
+
+    void cursorKeepsDisplayedSizeAtReducedResolution()
+    {
+        Scene scene(all::StereoPath::QuadBuffer);
+        scene.window.setProperty("_q_stereo_view_size", QSize(1544, 1080));
+        const float original = scene.renderer->sceneItem()->property("cursorScale").toFloat();
+        QVERIFY(original > 0.0f);
+        scene.window.resize(1029, 720);
+        QCOMPARE(scene.renderer->displaySize(), QSize(1544, 1080));
+        QCOMPARE(scene.renderer->sceneItem()->property("cursorScale").toFloat(), original);
+        scene.window.setProperty("_q_stereo_view_size", QSize(772, 540));
+        const float smallerViewScale = scene.renderer->sceneItem()->property("cursorScale").toFloat();
+        QVERIFY(smallerViewScale > original * 1.99f && smallerViewScale < original * 2.01f);
+    }
+
     void eyeCamerasAreTheSharedOffAxisFrusta()
     {
         Scene scene(all::StereoPath::QuadBuffer);

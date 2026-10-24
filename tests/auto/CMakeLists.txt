@@ -28,7 +28,7 @@ if(BUILD_QT_UI)
         # The Qt Quick 3D renderer's cameras and eyes, loaded with the offscreen platform
         if(BUILD_QUICK3D_RENDERER)
             qt_add_executable(quick3d_renderer_test quick3d_renderer.cpp)
-            target_link_libraries(quick3d_renderer_test PRIVATE Qt6::Test Qt6::Quick Qt6::Quick3DPrivate KDAB::Quick3DRenderer)
+            target_link_libraries(quick3d_renderer_test PRIVATE Qt6::Test Qt6::Quick Qt6::Quick3DPrivate KDAB::Quick3DRenderer KDAB::QtCommon)
             set_target_properties(quick3d_renderer_test PROPERTIES CXX_STANDARD 20 AUTOMOC ON)
             qt_import_qml_plugins(quick3d_renderer_test)
             add_test(NAME quick3d_renderer COMMAND quick3d_renderer_test)
