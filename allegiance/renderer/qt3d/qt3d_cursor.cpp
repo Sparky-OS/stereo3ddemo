@@ -264,7 +264,8 @@ void CursorEntity::updateSize()
     float distanceToCamera = cameraPosition.length();
 
     float fov = 2.0 * atan(1.0 / m_projectionMatrix(0, 0));
-    float pixelsToAngle = fov / m_window->width();
+    const int viewWidth = m_viewSize.isValid() ? m_viewSize.width() : m_window->width();
+    float pixelsToAngle = fov / viewWidth;
     float radius = distanceToCamera * tan(targetSize * pixelsToAngle / 2.0);
     const float scaleValue = m_scale_factor * (m_scaling_enabled ? radius : cursor_size);
     m_transform->setScale(scaleValue); // Set the scale based on the calculated radius

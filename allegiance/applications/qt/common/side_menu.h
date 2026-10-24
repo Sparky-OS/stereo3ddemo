@@ -9,6 +9,7 @@
 #include <applications/qt/common/qml/Schneider/cursor_controller.h>
 #include <applications/qt/common/qml/Schneider/scene_controller.h>
 #include <applications/qt/common/qml/Schneider/misc_controller.h>
+#include <applications/qt/common/qml/Schneider/stereo_controller.h>
 
 #include <applications/qt/common/qml/Schneider/style.h>
 
@@ -39,12 +40,14 @@ public:
         m_cameraController = m_engine->singletonInstance<CameraController*>("Schneider", "Camera");
         m_cursorController = m_engine->singletonInstance<CursorController*>("Schneider", "Cursor");
         m_miscController = m_engine->singletonInstance<MiscController*>("Schneider", "Misc");
+        m_stereoController = m_engine->singletonInstance<StereoController*>("Schneider", "Stereo");
         m_appStyle = m_engine->singletonInstance<AppStyle*>("Schneider", "Style");
 
         assert(m_sceneController);
         assert(m_cameraController);
         assert(m_cursorController);
         assert(m_miscController);
+        assert(m_stereoController);
         assert(m_appStyle);
 
         setClearColor();
@@ -61,6 +64,7 @@ public:
     inline CameraController* cameraController() const { return m_cameraController; }
     inline CursorController* cursorController() const { return m_cursorController; }
     inline MiscController* miscController() const { return m_miscController; }
+    inline StereoController* stereoController() const { return m_stereoController; }
     inline AppStyle* appStyle() const { return m_appStyle; }
 
     inline QQmlEngine* qmlEngine() const { return m_engine; }
@@ -157,6 +161,7 @@ private:
     CameraController* m_cameraController{ nullptr };
     CursorController* m_cursorController{ nullptr };
     MiscController* m_miscController{ nullptr };
+    StereoController* m_stereoController{ nullptr };
     AppStyle* m_appStyle{ nullptr };
 };
 } // namespace all::qt

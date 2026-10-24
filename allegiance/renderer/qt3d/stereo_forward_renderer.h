@@ -1,6 +1,7 @@
 #pragma once
 #include <Qt3DRender/QRenderSurfaceSelector>
 #include <shared/stereo_camera.h>
+#include <shared/stereo_path.h>
 
 namespace Qt3DRender {
 class QCameraSelector;
@@ -24,7 +25,9 @@ public:
     };
     Q_ENUM(Mode)
 public:
-    explicit QStereoForwardRenderer(Qt3DCore::QNode* parent = nullptr);
+    explicit QStereoForwardRenderer(all::StereoPath path, Qt3DCore::QNode* parent = nullptr);
+
+    inline all::StereoPath stereoPath() const { return m_path; }
 
 public:
     void setCamera(QStereoProxyCamera* newCamera);
@@ -52,6 +55,7 @@ Q_SIGNALS:
     void cameraChanged();
 
 private:
+    all::StereoPath m_path;
     Mode m_mode = Mode::Scene;
     all::DisplayMode m_displayMode = all::DisplayMode::Stereo;
 

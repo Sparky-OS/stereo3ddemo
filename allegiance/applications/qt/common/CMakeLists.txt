@@ -27,8 +27,24 @@ qt_add_library(
     main_window.cpp
     renderer_initializer.h
     window_event_watcher.h
+    stereo_output.h
+    stereo_output.cpp
     ${CMAKE_SOURCE_DIR}/assets/resources.qrc
 )
+
+# The desktop's declaration of a full side by side surface (Sparky Stereo OS's libstereo-declare); without it
+# the side by side path is unavailable and the program says so
+find_package(StereoDeclare 1.1 CONFIG QUIET)
+if(TARGET StereoDeclare::stereo-declare)
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(WaylandClient IMPORTED_TARGET wayland-client)
+    find_package(Qt6 6.8.2 COMPONENTS GuiPrivate QUIET) # the window's native surface, from the platform interface
+    if(TARGET PkgConfig::WaylandClient AND TARGET Qt6::GuiPrivate)
+        target_compile_definitions(${PROJECT_NAME} PUBLIC ALLEGIANCE_STEREO_DECLARE)
+        target_link_libraries(${PROJECT_NAME} PRIVATE StereoDeclare::stereo-declare PkgConfig::WaylandClient Qt6::GuiPrivate)
+    endif()
+endif()
+add_feature_info(StereoDeclare "TARGET StereoDeclare::stereo-declare" "full side by side declared to the desktop without a stereo context")
 
 add_library(
     KDAB::QtCommon ALIAS ${PROJECT_NAME}

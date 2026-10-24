@@ -37,6 +37,8 @@
 
 namespace all::qt3d {
 
+Q_LOGGING_CATEGORY(lcCamera, "stereo3ddemo.camera")
+
 Qt3DRenderer::Qt3DRenderer(Qt3DExtras::Qt3DWindow* view,
                            all::StereoCamera& stereoCamera,
                            std::function<void(std::string_view, std::any)> propertyUpdateNotifier)
@@ -112,6 +114,12 @@ void Qt3DRenderer::projectionChanged()
                                interocularDistance,
                                m_stereoCamera->mode());
 
+    qCDebug(lcCamera).nospace() << "camera position " << toQVector3D(m_stereoCamera->position()) << " forward " << toQVector3D(m_stereoCamera->forwardVector())
+                                << " up " << toQVector3D(m_stereoCamera->upVector()) << " fov " << m_stereoCamera->fov() << " aspect " << m_stereoCamera->aspectRatio()
+                                << " near " << m_stereoCamera->nearPlane() << " far " << m_stereoCamera->farPlane() << " e " << interocularDistance
+                                << " d " << m_stereoCamera->convergencePlaneDistance() << " mode " << int(m_stereoCamera->mode())
+                                << " eye " << eyeSize() << " window " << m_view->size();
+
     // Frustum
     {
         m_frustumAmplifiedCamera->updateProjection(m_stereoCamera->nearPlane(),
@@ -173,7 +181,7 @@ void Qt3DRenderer::createAspects(std::shared_ptr<all::ModelNavParameters> nav_pa
 
     m_rootEntity = std::make_unique<Qt3DCore::QEntity>();
 
-    m_renderer = new QStereoForwardRenderer();
+    m_renderer = new QStereoForwardRenderer(m_stereoPath);
     m_view->setActiveFrameGraph(m_renderer);
     m_view->renderSettings()->pickingSettings()->setPickMethod(QPickingSettings::TrianglePicking);
 
@@ -230,7 +238,8 @@ void Qt3DRenderer::createScene(Qt3DCore::QEntity* root)
         m_focusArea->addComponent(m_renderer->focusAreaLayer());
 
         auto updateViewSize = [this] {
-            m_focusArea->setViewSize(QSize(m_view->width(), m_view->height()));
+            m_focusArea->setViewSize(eyeSize());
+            m_cursor->setViewSize(eyeSize());
         };
         QObject::connect(m_view, &Qt3DExtras::Qt3DWindow::widthChanged, m_focusArea, updateViewSize);
         QObject::connect(m_view, &Qt3DExtras::Qt3DWindow::heightChanged, m_focusArea, updateViewSize);
@@ -257,7 +266,10 @@ void Qt3DRenderer::createScene(Qt3DCore::QEntity* root)
         m_focusPlanePreview->addComponent(m_renderer->focusPlaneLayer());
     }
 
-    loadModel();
+    if (m_initialModel.empty())
+        loadModel();
+    else
+        loadModel(m_initialModel);
 
     m_view->setRootEntity(m_rootEntity.get());
 
@@ -380,6 +392,11 @@ float Qt3DRenderer::aspectRatio() const
     return m_camera->centerCamera()->aspectRatio();
 }
 
+QSize Qt3DRenderer::eyeSize() const
+{
+    return QSize(m_view->width() / all::stereoViews(m_stereoPath), m_view->height());
+}
+
 void Qt3DRenderer::completeInitialization()
 {
 }
@@ -409,7 +426,8 @@ void Qt3DRenderer::loadImage(QUrl path)
     rightImageEntity->addComponent(m_renderer->stereoImageLayer());
 
     auto updateImageMeshes = [this, stereoImageMaterial, leftImageMesh, rightImageMesh] {
-        const QVector2D viewportSize{ static_cast<float>(m_view->width()), static_cast<float>(m_view->height()) };
+        const QSize eye = eyeSize();
+        const QVector2D viewportSize{ static_cast<float>(eye.width()), static_cast<float>(eye.height()) };
         const QVector2D imageSize = stereoImageMaterial->textureSize();
 
         leftImageMesh->setViewportSize(viewportSize);
@@ -676,7 +694,8 @@ void Qt3DRenderer::cursorHitResult(const Qt3DRender::QAbstractRayCaster::Hits& h
         const QVector3D viewCenter = m_camera->centerCamera()->position() + m_camera->centerCamera()->viewVector().normalized() * m_stereoCamera->convergencePlaneDistance();
         const QVector4D viewCenterScreen = m_camera->centerCamera()->projectionMatrix() * m_camera->centerCamera()->viewMatrix() * QVector4D(viewCenter, 1.0f);
         const float zFocus = viewCenterScreen.z() / viewCenterScreen.w();
-        const QVector3D cursorScreenPos(cursorPos.x(), m_view->height() - cursorPos.y(), zFocus);
+        const QSize eye = eyeSize();
+        const QVector3D cursorScreenPos(cursorPos.x(), eye.height() - cursorPos.y(), zFocus);
 
         auto unprojectZO = [](const QVector3D& p, const QMatrix4x4& viewMatrix, const QMatrix4x4& projectionMatrix, const QRect& viewport) {
             const QMatrix4x4 inverse = QMatrix4x4(projectionMatrix * viewMatrix).inverted();
@@ -695,7 +714,7 @@ void Qt3DRenderer::cursorHitResult(const Qt3DRender::QAbstractRayCaster::Hits& h
         const QVector3D unv = unprojectZO(cursorScreenPos,
                                           m_camera->centerCamera()->viewMatrix(),
                                           m_camera->centerCamera()->projectionMatrix(),
-                                          QRect{ 0, 0, m_view->width(), m_view->height() });
+                                          QRect{ 0, 0, eye.width(), eye.height() });
         m_cursor->setPosition(unv);
         return;
     }

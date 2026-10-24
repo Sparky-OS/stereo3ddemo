@@ -1,6 +1,9 @@
 #include <applications/qt/common/main_window.h>
 #include <applications/qt/common/side_menu.h>
 
+#include <QEvent>
+#include <QTimer>
+
 namespace all::qt {
 
 MainWindow::MainWindow(QSize size)
@@ -12,7 +15,49 @@ MainWindow::MainWindow(QSize size)
 void MainWindow::setEmbeddedWindow(QWindow* embeddedWindow)
 {
     m_embeddedWindow = embeddedWindow;
-    setCentralWidget(QWidget::createWindowContainer(m_embeddedWindow)); // Takes ownership of embeddedWindow
+    m_embeddedContainer = QWidget::createWindowContainer(m_embeddedWindow); // Takes ownership of embeddedWindow
+    m_embeddedContainer->installEventFilter(this);
+    // The container sizes its window to its own rectangle whenever an ancestor moves or resizes; with two views
+    // the window is resized back to hold both, right after
+    connect(m_embeddedWindow, &QWindow::widthChanged, this, [this]() {
+        if (m_embeddedViews > 1)
+            QTimer::singleShot(0, this, &MainWindow::applyEmbeddedGeometry);
+    });
+    setCentralWidget(m_embeddedContainer);
+}
+
+void MainWindow::setEmbeddedViews(int views)
+{
+    m_embeddedViews = views;
+    applyEmbeddedGeometry();
+}
+
+bool MainWindow::eventFilter(QObject* watched, QEvent* event)
+{
+    // The container sizes its window to its own rectangle on these events; with two views the window is
+    // resized afterwards to hold both
+    if (watched == m_embeddedContainer && m_embeddedViews > 1) {
+        switch (event->type()) {
+        case QEvent::Resize:
+        case QEvent::Move:
+        case QEvent::Show:
+            QTimer::singleShot(0, this, &MainWindow::applyEmbeddedGeometry);
+            break;
+        default:
+            break;
+        }
+    }
+    return QMainWindow::eventFilter(watched, event);
+}
+
+void MainWindow::applyEmbeddedGeometry()
+{
+    if (!m_embeddedWindow || !m_embeddedContainer || m_embeddedViews <= 1)
+        return;
+    const QSize size = m_embeddedContainer->size();
+    const QRect geometry(m_embeddedContainer->mapTo(m_embeddedContainer->window(), QPoint()), QSize(size.width() * m_embeddedViews, size.height()));
+    if (m_embeddedWindow->geometry() != geometry)
+        m_embeddedWindow->setGeometry(geometry);
 }
 
 MainWindow::~MainWindow()
@@ -95,12 +140,13 @@ bool MainWindow::mousePressed() const
 
 void MainWindow::mouseHoverOveringOver3DView()
 {
-    if (
-            m_sideMenu->cursorController()->displayMode() == CursorController::CursorDisplayMode::Both ||
-            m_sideMenu->cursorController()->displayMode() == CursorController::CursorDisplayMode::SystemCursorOnly)
-        setCursor(Qt::ArrowCursor);
-    else
-        setCursor(Qt::BlankCursor);
+    const bool systemCursor = m_sideMenu->cursorController()->displayMode() == CursorController::CursorDisplayMode::Both ||
+            m_sideMenu->cursorController()->displayMode() == CursorController::CursorDisplayMode::SystemCursorOnly;
+    const QCursor cursor(systemCursor ? Qt::ArrowCursor : Qt::BlankCursor);
+    setCursor(cursor);
+    // The 3D window is a window of its own: the pointer over it takes that window's cursor
+    if (m_embeddedWindow)
+        m_embeddedWindow->setCursor(cursor);
 }
 
 bool MainWindow::lockMouseInPlace() const

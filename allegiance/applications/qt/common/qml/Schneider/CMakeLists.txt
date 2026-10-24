@@ -13,6 +13,8 @@ qt_add_qml_module(
     cursor_controller.cpp
     misc_controller.h
     misc_controller.cpp
+    stereo_controller.h
+    stereo_controller.cpp
     style.h
     QML_FILES
     "qml/ButtonX.qml"

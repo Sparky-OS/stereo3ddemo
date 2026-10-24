@@ -20,8 +20,9 @@
 #include <Qt3DRender/QRasterMode>
 #include <QSurfaceFormat>
 
-all::qt3d::QStereoForwardRenderer::QStereoForwardRenderer(Qt3DCore::QNode* parent)
+all::qt3d::QStereoForwardRenderer::QStereoForwardRenderer(all::StereoPath path, Qt3DCore::QNode* parent)
     : Qt3DRender::QRenderSurfaceSelector(parent)
+    , m_path(path)
     , m_camera(nullptr)
     , m_leftLayer(new Qt3DRender::QLayer(this))
     , m_rightLayer(new Qt3DRender::QLayer(this))
@@ -40,8 +41,13 @@ all::qt3d::QStereoForwardRenderer::QStereoForwardRenderer(Qt3DCore::QNode* paren
     m_frustumLayer->setRecursive(true);
     m_focusAreaLayer->setObjectName(QStringLiteral("FocusAreaLayer"));
 
-    const QSurfaceFormat f = QSurfaceFormat::defaultFormat();
-    const bool supportsStereo = f.stereo();
+    // Quad buffer: each eye in its own back buffer. Side by side: both eyes in the one back buffer, the left eye
+    // in the left half of a window twice as wide, the right eye in the right half, each at the view's full size.
+    // Otherwise one view fills the window.
+    const bool supportsStereo = m_path == all::StereoPath::QuadBuffer;
+    const bool sideBySide = m_path == all::StereoPath::SideBySide;
+    const QRectF leftHalf(0.0, 0.0, 0.5, 1.0);
+    const QRectF rightHalf(0.5, 0.0, 0.5, 1.0);
 
     auto vp = new Qt3DRender::QViewport();
     auto noPicking = new Qt3DRender::QNoPicking();
@@ -171,11 +177,15 @@ all::qt3d::QStereoForwardRenderer::QStereoForwardRenderer(Qt3DCore::QNode* paren
     auto* leftViewport = new Qt3DRender::QViewport();
     auto* rightViewport = new Qt3DRender::QViewport();
 
-    if (!supportsStereo) {
-        leftViewport->setNormalizedRect(QRectF(0.0f, 0.25f, 0.5f, 0.5f));
-        rightViewport->setNormalizedRect(QRectF(0.5f, 0.25f, 0.5f, 0.5f));
+    if (sideBySide) {
+        leftViewport->setNormalizedRect(leftHalf);
+        rightViewport->setNormalizedRect(rightHalf);
     }
 
+    // Picking happens in the first view's area: the pointer moves over one view
+    auto* centerViewport = new Qt3DRender::QViewport();
+    if (sideBySide)
+        centerViewport->setNormalizedRect(leftHalf);
     m_centerCameraSelector = makeCenterCameraPickingBranch();
     m_centerCameraSelector->setObjectName("CenterCamera");
     m_leftCameraSelector = makeCameraSelectorForSceneBranch(leftRt, m_leftSceneRasterMode, true);
@@ -228,7 +238,8 @@ all::qt3d::QStereoForwardRenderer::QStereoForwardRenderer(Qt3DCore::QNode* paren
 
     // Scene Picking Branch (no render)
     m_centerLayerFilter->setParent(vp);
-    m_centerCameraSelector->setParent(m_centerLayerFilter);
+    centerViewport->setParent(m_centerLayerFilter);
+    m_centerCameraSelector->setParent(centerViewport);
 
     // Scene Render Branch (no picking)
     noPicking->setParent(vp);
@@ -243,9 +254,14 @@ all::qt3d::QStereoForwardRenderer::QStereoForwardRenderer(Qt3DCore::QNode* paren
     m_rightCameraSelector->setParent(rightViewport);
     rightViewport->setParent(m_rightLayerFilter);
 
-    // Frustum Overlay
-    m_leftFrustumCameraSelector->setParent(noPicking);
-    m_rightFrustumCameraSelector->setParent(noPicking);
+    // Frustum Overlay, inside each eye's viewport so it stays in that eye's half
+    m_leftFrustumCameraSelector->setParent(leftViewport);
+    m_rightFrustumCameraSelector->setParent(rightViewport);
+
+    // One view only: the right branch draws nothing
+    if (!supportsStereo && !sideBySide) {
+        m_rightLayerFilter->setEnabled(false);
+    }
 
 #ifdef QT_DEBUG
     auto* debugOverlay = new Qt3DRender::QDebugOverlay();
@@ -288,7 +304,11 @@ void all::qt3d::QStereoForwardRenderer::setDisplayMode(DisplayMode displayMode)
 
     switch (m_displayMode) {
     case all::DisplayMode::Stereo:
-        m_leftCameraSelector->setCamera(m_camera->leftCamera());
+        // With one view: the centre camera when 3D is off, the left eye when 3D has no route to the screen
+        if (m_path == all::StereoPath::Off)
+            m_leftCameraSelector->setCamera(m_camera->centerCamera());
+        else
+            m_leftCameraSelector->setCamera(m_camera->leftCamera());
         m_rightCameraSelector->setCamera(m_camera->rightCamera());
         break;
     case all::DisplayMode::Mono:

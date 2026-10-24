@@ -8,7 +8,9 @@
 #include <QVector3D>
 #include <QVector2D>
 #include <QUrl>
+#include <QLoggingCategory>
 #include <shared/stereo_camera.h>
+#include <shared/stereo_path.h>
 
 #include <filesystem>
 #include <any>
@@ -24,6 +26,8 @@ struct StereoCamera;
 } // namespace all
 
 namespace all::qt3d {
+Q_DECLARE_LOGGING_CATEGORY(lcCamera)
+
 class CursorEntity;
 class Frustum;
 class FrustumRect;
@@ -43,6 +47,14 @@ public:
     void viewChanged();
     void projectionChanged();
     void createAspects(std::shared_ptr<all::ModelNavParameters> nav_params);
+
+    // Before createAspects: how the picture reaches the screen, and the model to show first
+    void setStereoPath(all::StereoPath path) { m_stereoPath = path; }
+    all::StereoPath stereoPath() const { return m_stereoPath; }
+    void setInitialModel(std::filesystem::path path) { m_initialModel = std::move(path); }
+
+    // The size of one eye's picture: the window's, or half its width when both eyes share it
+    QSize eyeSize() const;
 
     void loadModel(std::filesystem::path path = "assets/motorbike.obj");
     void viewAll();
@@ -91,6 +103,8 @@ private:
     void cursorHitResult(const Qt3DRender::QAbstractRayCaster::Hits& hits);
 
     Qt3DExtras::Qt3DWindow* m_view{ nullptr };
+    all::StereoPath m_stereoPath{ all::StereoPath::QuadBuffer };
+    std::filesystem::path m_initialModel;
     std::unique_ptr<Qt3DCore::QEntity> m_rootEntity;
     Qt3DCore::QEntity* m_sceneEntity = nullptr;
     Qt3DCore::QEntity* m_userEntity = nullptr;

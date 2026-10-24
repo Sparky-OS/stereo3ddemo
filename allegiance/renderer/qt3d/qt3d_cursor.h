@@ -124,6 +124,13 @@ public:
         updateSize();
     }
 
+    // The size of the view the cursor is drawn in (one eye), when it is not the whole window
+    void setViewSize(const QSize& size)
+    {
+        m_viewSize = size;
+        updateSize();
+    }
+
 protected:
     CursorSphere* m_sphere;
     CursorCross* m_cross;
@@ -137,6 +144,7 @@ protected:
     float m_scale_factor = 1.0f;
     bool m_scaling_enabled = true;
     bool m_locked = false;
+    QSize m_viewSize;
 
 private:
     QMatrix4x4 m_worldMatrix;

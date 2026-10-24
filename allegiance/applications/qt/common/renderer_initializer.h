@@ -7,6 +7,7 @@
 #include <applications/qt/common/window_event_watcher.h>
 #include <applications/qt/common/side_menu.h>
 #include <applications/qt/common/util_qt.h>
+#include <shared/stereo_path.h>
 
 #include <QStyleFactory>
 #include <QFileDialog>
@@ -43,7 +44,9 @@ template<typename RendererSurface, typename Renderer>
 class RendererInitializer
 {
 public:
-    RendererInitializer(MainWindow* mainWindow, RendererSurface* rendererSurface)
+    RendererInitializer(MainWindow* mainWindow, RendererSurface* rendererSurface,
+                        all::StereoPath stereoPath = all::StereoPath::QuadBuffer,
+                        std::filesystem::path initialModel = {})
         : m_mainWindow(mainWindow)
         , m_windowEventWatcher(std::make_unique<WindowEventWatcher>(m_mainWindow))
         , m_renderer(std::make_unique<Renderer>(rendererSurface,
@@ -59,7 +62,16 @@ public:
             m_cameraController = sideMenu->cameraController();
             m_cursorController = sideMenu->cursorController();
             m_miscController = sideMenu->miscController();
+            m_stereoController = sideMenu->stereoController();
             m_appStyle = sideMenu->appStyle();
+        }
+
+        // Renderers that draw stereo themselves take the path and the first model
+        if constexpr (requires { m_renderer->setStereoPath(stereoPath); })
+            m_renderer->setStereoPath(stereoPath);
+        if constexpr (requires { m_renderer->setInitialModel(initialModel); }) {
+            if (!initialModel.empty())
+                m_renderer->setInitialModel(initialModel);
         }
 
         // Basic setup of the application
@@ -251,12 +263,21 @@ public:
 
         QWindow* qWindow = m_renderer->window();
 
-        QObject::connect(qWindow, &QWindow::widthChanged, [this, qWindow]() {
-            m_camera.aspectRatio = (float(qWindow->width()) / qWindow->height());
-        });
-        QObject::connect(qWindow, &QWindow::heightChanged, [this, qWindow]() {
-            m_camera.aspectRatio = (float(qWindow->width()) / qWindow->height());
-        });
+        // The camera's aspect is one eye's, which is the window's unless both eyes share it side by side
+        auto eyeSize = [this, qWindow]() -> QSize {
+            if constexpr (requires { m_renderer->eyeSize(); })
+                return m_renderer->eyeSize();
+            else
+                return qWindow->size();
+        };
+        auto updateAspectRatio = [this, eyeSize]() {
+            const QSize eye = eyeSize();
+            if (eye.height() > 0)
+                m_camera.aspectRatio = float(eye.width()) / eye.height();
+            m_stereoController->setEyeSize(eye);
+        };
+        QObject::connect(qWindow, &QWindow::widthChanged, updateAspectRatio);
+        QObject::connect(qWindow, &QWindow::heightChanged, updateAspectRatio);
 
         QObject::connect(m_cameraController, &CameraController::focusDistanceChanged, [this] { focusDistanceUpdated(); });
         QObject::connect(m_cameraController, &CameraController::popOutChanged, [this] { focusDistanceUpdated(); });
@@ -346,7 +367,7 @@ public:
         m_renderer->createAspects(m_navParams);
 
         // Set Initial Values
-        m_camera.aspectRatio = (float(qWindow->width()) / qWindow->height());
+        updateAspectRatio();
         m_camera.interocularDistance = m_cameraController->eyeDistance();
         m_camera.convergencePlaneDistance = m_cameraController->focusDistance();
         m_camera.fov = m_cameraController->fov();
@@ -447,6 +468,7 @@ private:
     CameraController* m_cameraController{ nullptr };
     CursorController* m_cursorController{ nullptr };
     MiscController* m_miscController{ nullptr };
+    StereoController* m_stereoController{ nullptr };
     AppStyle* m_appStyle{ nullptr };
     bool m_cursorLocked{ false };
     QPoint m_cursorPosWhenLocked;
