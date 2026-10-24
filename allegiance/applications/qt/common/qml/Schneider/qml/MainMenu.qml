@@ -31,6 +31,65 @@ ScrollView {
             }
         }
 
+        // Stereo 3D: the program's own options; the desktop makes every screen's format from the two eyes
+        Pane {
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignTop
+
+            background: Rectangle {
+                color: Style.background
+            }
+
+            RowLayout {
+                SectionTitle {
+                    Layout.maximumWidth: 40
+                    Layout.alignment: Qt.AlignRight
+                    id: stereo_section_title
+                }
+                Label {
+                    text: qsTr("Stereo 3D")
+                    font: Style.fontButton
+                    leftPadding: 10
+                }
+            }
+            topPadding: 0
+            bottomPadding: 0
+        }
+        StereoMenu {
+            Layout.fillWidth: true
+            visible: stereo_section_title.isVisible
+        }
+
+        // Advanced: the demonstrator's own controls
+        Pane {
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignTop
+
+            background: Rectangle {
+                color: Style.background
+            }
+
+            RowLayout {
+                SectionTitle {
+                    Layout.maximumWidth: 40
+                    Layout.alignment: Qt.AlignRight
+                    id: advanced_section_title
+                    isVisible: false
+                }
+                Label {
+                    text: qsTr("Advanced")
+                    font: Style.fontButton
+                    leftPadding: 10
+                }
+            }
+            topPadding: 0
+            bottomPadding: 0
+        }
+
+        ColumnLayout {
+        Layout.fillWidth: true
+        visible: advanced_section_title.isVisible
+
         // Misc
         Pane {
             Layout.fillWidth: true
@@ -199,5 +258,6 @@ ScrollView {
                  */
             }
         }
+        } // Advanced
     }
 }

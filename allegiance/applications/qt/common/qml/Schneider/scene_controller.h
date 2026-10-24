@@ -15,6 +15,8 @@ class SceneController : public QObject
     QML_SINGLETON
     QML_NAMED_ELEMENT(Scene)
 public:
+    explicit SceneController(QObject* parent = nullptr);
+
     float mouseSensitivity();
     void setMouseSensitivity(float sensitivity);
 

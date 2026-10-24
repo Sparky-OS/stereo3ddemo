@@ -1,5 +1,15 @@
 #include "scene_controller.h"
 
+#include <QSettings>
+
+SceneController::SceneController(QObject* parent)
+    : QObject(parent)
+{
+    QSettings settings;
+    m_mouseSensitivity = settings.value(QStringLiteral("scene/mouseSensitivity"), m_mouseSensitivity).toFloat();
+    m_zoomAmount = settings.value(QStringLiteral("scene/zoomAmount"), m_zoomAmount).toFloat();
+}
+
 float SceneController::mouseSensitivity()
 {
     return m_mouseSensitivity;
@@ -10,6 +20,7 @@ void SceneController::setMouseSensitivity(float sensitivity)
     if (sensitivity == m_mouseSensitivity)
         return;
     m_mouseSensitivity = sensitivity;
+    QSettings().setValue(QStringLiteral("scene/mouseSensitivity"), m_mouseSensitivity);
     Q_EMIT mouseSensitivityChanged();
 }
 
@@ -59,6 +70,7 @@ void SceneController::setZoomAmount(float newZoomAmount)
     if (qFuzzyCompare(m_zoomAmount, newZoomAmount))
         return;
     m_zoomAmount = newZoomAmount;
+    QSettings().setValue(QStringLiteral("scene/zoomAmount"), m_zoomAmount);
     Q_EMIT zoomAmountChanged();
 }
 
