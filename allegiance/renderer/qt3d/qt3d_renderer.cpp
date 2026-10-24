@@ -695,6 +695,7 @@ void Qt3DRenderer::cursorHitResult(const Qt3DRender::QAbstractRayCaster::Hits& h
 
     if (nearestHitIterator == hits.end()) {
         auto cursorPos = m_view->mapFromGlobal(m_view->cursor().pos());
+        qCDebug(lcCamera) << "cursor at" << cursorPos << "hits nothing: on the focus plane at" << m_stereoCamera->convergencePlaneDistance();
 
         const QVector3D viewCenter = m_camera->centerCamera()->position() + m_camera->centerCamera()->viewVector().normalized() * m_stereoCamera->convergencePlaneDistance();
         const QVector4D viewCenterScreen = m_camera->centerCamera()->projectionMatrix() * m_camera->centerCamera()->viewMatrix() * QVector4D(viewCenter, 1.0f);
@@ -723,6 +724,8 @@ void Qt3DRenderer::cursorHitResult(const Qt3DRender::QAbstractRayCaster::Hits& h
         m_cursor->setPosition(unv);
         return;
     }
+    qCDebug(lcCamera) << "cursor hit" << nearestHitIterator->entity()->objectName() << "at" << nearestHitIterator->worldIntersection()
+                      << "distance" << nearestHitIterator->distance() << "of" << hits.size() << "hits";
     m_cursor->setPosition(nearestHitIterator->worldIntersection());
 }
 

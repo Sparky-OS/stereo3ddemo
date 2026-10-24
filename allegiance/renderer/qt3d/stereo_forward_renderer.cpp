@@ -258,10 +258,9 @@ all::qt3d::QStereoForwardRenderer::QStereoForwardRenderer(all::StereoPath path, 
     m_leftFrustumCameraSelector->setParent(leftViewport);
     m_rightFrustumCameraSelector->setParent(rightViewport);
 
-    // One view only: the right branch draws nothing
-    if (!supportsStereo && !sideBySide) {
-        m_rightLayerFilter->setEnabled(false);
-    }
+    // One view only: the right eye's branch is left out of the frame graph (a disabled layer filter still drew)
+    if (!supportsStereo && !sideBySide)
+        m_rightLayerFilter->setParent(static_cast<Qt3DCore::QNode*>(nullptr));
 
 #ifdef QT_DEBUG
     auto* debugOverlay = new Qt3DRender::QDebugOverlay();
