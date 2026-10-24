@@ -1,0 +1,36 @@
+.TH STEREO3DDEMO 1 "October 2026" "stereo3ddemo 0.3.1" "User Commands"
+.SH NAME
+stereo3ddemo \- Stereo Demonstrator, 3D models in stereo with a 3D cursor
+.SH SYNOPSIS
+.B stereo3ddemo
+[\fIoptions\fR] [\fImodel\fR]
+.SH DESCRIPTION
+The Stereo Demonstrator, by KDAB, shows 3D models (OBJ, FBX, glTF) on stereo displays with a 3D cursor drawn where the mouse meets the model, automatic focus over a focus area, asymmetric frusta, an eye separation taken from the focus distance, pop-out and the field of view from the screen's physical size.
+.PP
+This is the stereo version by Sparky Stereo OS: the 3D area is the one stereo surface, drawn with a quad-buffer OpenGL context where the stack gives one, or as the two eyes side by side declared to the desktop, which makes every screen's format from them.
+The side menu holds the program's 3D options (Enable 3D, the stereo output path, the render resolution per eye, a shortcut to the display settings) and the demonstrator's own controls under Advanced.
+Every setting is kept in
+.IR ~/.config/stereo3ddemo/stereo3ddemo.conf .
+.SH OPTIONS
+.TP
+.I model
+A model file to open (.obj, .fbx, .gltf, .glb). Without one the bundled motorbike is shown.
+.TP
+.BR \-h ", " \-\-help
+Show the options and exit.
+.TP
+.BR \-v ", " \-\-version
+Show the version and exit.
+.SH ENVIRONMENT
+.TP
+.B DISABLE_STEREO
+When set, one picture is drawn and nothing is declared, as with Enable 3D off.
+.TP
+.B QT_LOGGING_RULES=stereo3ddemo.*=true
+Logs the stereo path taken, the window's format, the declaration and the camera parameters.
+.SH KEYS
+F2 autofocus, F3 and F4 focus distance, F5 and F6 pop-out, F7 and F8 separation, F frustum overlay, W wireframe, C view all, Space cycles the cursor display mode, F11 full screen, F12 copies a screenshot to the clipboard.
+.SH SEE ALSO
+The Stereo Demonstrator: https://github.com/KDABLabs/stereo3ddemo
+.br
+The stereo version: https://github.com/Sparky-OS/stereo3ddemo

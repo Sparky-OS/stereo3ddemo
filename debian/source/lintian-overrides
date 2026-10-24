@@ -1,0 +1,4 @@
+# The fork's packaging lives on its branch and the version carries +dfsg because the 3Dconnexion SDK bundled
+# upstream is left out of the source (see debian/copyright); a native source package was chosen so the
+# version reads 0.3.1+git20250303.4f99a5d+dfsg+stereo3d1 as the edition names it.
+stereo3ddemo source: dfsg-version-in-native-package *
