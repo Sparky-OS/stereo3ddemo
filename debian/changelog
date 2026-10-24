@@ -12,6 +12,8 @@ stereo3ddemo (0.3.1+git20250303.4f99a5d+dfsg+stereo3d2) unstable; urgency=medium
     layout test checks it.
   * Quad buffer on X11 needs qt6-3d +stereo3d1 (the renderer's context
     follows the window's format).
+  * The render resolution label wraps, so a longer language is not cut at
+    the menu's width.
 
  -- Daniel Ramos (Capitain Jack) <Capitain_Jack@yahoo.com>  Sat, 24 Oct 2026 04:47:41 -0300
 
