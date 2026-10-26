@@ -25,6 +25,12 @@ stereo3ddemo (0.3.1+git20250303.4f99a5d+dfsg+stereo3d3) unstable; urgency=medium
   * Check the actual Qt Quick swapchain eye targets before accepting
     quad-buffer stereo. Automatic falls back to the declared pair when
     a driver retains the requested stereo format but creates a mono target.
+  * Follow native Wayland surface replacement when embedding a new view.
+    Keep controller callbacks and actions within the renderer lifetime,
+    and refresh focus distance after reloading the scene bounds.
+  * Use the centre camera when 3D is off, preserving the teaching display
+    overrides. Cover camera selection and renderer destruction in QTest;
+    qualify mono projection and asynchronous NVIDIA buffer attachments.
 
  -- Daniel Ramos (Capitain Jack) <Capitain_Jack@yahoo.com>  Sat, 24 Oct 2026 17:10:00 -0300
 
