@@ -215,6 +215,29 @@ private Q_SLOTS:
         QCOMPARE(scene.renderer->viewCamera(0), scene.renderer->eyeCamera(all::Eye::Left));
     }
 
+    void singleViewCamera_data()
+    {
+        QTest::addColumn<bool>("off");
+        QTest::addColumn<int>("displayMode");
+        for (bool off : { false, true })
+            for (int mode = 0; mode < 4; ++mode)
+                QTest::newRow(qPrintable(QStringLiteral("%1-mode-%2").arg(off ? "off" : "unavailable").arg(mode))) << off << mode;
+    }
+
+    void singleViewCamera()
+    {
+        QFETCH(bool, off);
+        QFETCH(int, displayMode);
+        Scene scene(off ? all::StereoPath::Off : all::StereoPath::Unavailable);
+        scene.renderer->propertyChanged("display_mode", static_cast<all::DisplayMode>(displayMode));
+        QQuick3DCamera* expected = scene.renderer->eyeCamera(all::Eye::Left);
+        if (displayMode == int(all::DisplayMode::Mono) || (off && displayMode == int(all::DisplayMode::Stereo)))
+            expected = scene.renderer->centerCamera();
+        else if (displayMode == int(all::DisplayMode::Right))
+            expected = scene.renderer->eyeCamera(all::Eye::Right);
+        QCOMPARE(scene.renderer->viewCamera(0), expected);
+    }
+
     void theRenderResolutionIsTheWindowsSize()
     {
         // The window's size is the render size; the view is shown at the size the window says
