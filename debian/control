@@ -14,7 +14,7 @@ Build-Depends: debhelper-compat (= 13),
                ninja-build,
                pkgconf,
                qt6-3d-dev,
-               qt6-base-dev,
+               qt6-base-dev (>= 6.11.2+dfsg-5+stereo3d12),
                qt6-base-private-dev,
                qt6-declarative-dev,
                qt6-l10n-tools,
@@ -22,14 +22,16 @@ Build-Depends: debhelper-compat (= 13),
                qt6-quick3d-private-dev,
                qt6-tools-dev,
 Standards-Version: 4.7.4
-Homepage: https://github.com/Sparky-OS/stereo3ddemo
+Homepage: https://sparkylinux.org
+Bugs: https://github.com/Sparky-OS/sparky-stereo-os/issues
 Vcs-Browser: https://github.com/Sparky-OS/stereo3ddemo
 Vcs-Git: https://github.com/Sparky-OS/stereo3ddemo.git
 Rules-Requires-Root: no
 
 Package: stereo3ddemo
 Architecture: any
-Depends: libqt6svg6,
+Depends: libqt6gui6 (>= 6.11.2+dfsg-5+stereo3d12),
+         libqt6svg6,
          qt6-svg-plugins,
          libqt6waylandclient6 (>= 6.11.2+dfsg-5+stereo3d11),
          libqt63dextras6 (>= 6.11.2+dfsg-2+stereo3d1),
@@ -60,11 +62,13 @@ Description: Stereo Demonstrator: 3D models in stereo, with a 3D cursor
  view from the screen's physical size.
  .
  This is the stereo version by Sparky Stereo OS. The 3D area is the
- one stereo surface: a quad-buffer OpenGL context where the stack
- gives one, or the two eyes drawn side by side and declared to the
+ one stereo surface: a two-eye swapchain where the stack provides
+ one, or the two eyes drawn side by side and declared to the
  desktop, which makes every screen's format from them (3D televisions,
  anaglyph on any monitor, interleaved and frame-sequential displays,
  two-output pairs, headsets). The side menu stays an ordinary 2D
- surface. The program's 3D options are Enable 3D, the stereo output
+ surface. Qt Quick 3D uses Vulkan by default, with OpenGL and the
+ original Qt 3D renderer available as options. The program's 3D
+ options are Enable 3D, the stereo output
  path, the render resolution per eye and a shortcut to the display
  settings; the demonstrator's own controls stay under Advanced.

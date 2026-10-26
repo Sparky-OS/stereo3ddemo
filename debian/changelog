@@ -18,6 +18,10 @@ stereo3ddemo (0.3.1+git20250303.4f99a5d+dfsg+stereo3d3) unstable; urgency=medium
     displayed size when changing the eye raster, and apply the selected
     tint to the cross cursor. Covered by quick3d_renderer_test.
   * Require the SVG image plugin for the demonstrator's Schneider logo.
+  * Require qt6-base +stereo3d12 for independent per-eye Vulkan MSAA
+    attachments and safe swapchain resize/destruction.
+  * Describe the Vulkan default and retained renderer choices, and use
+    the edition's package homepage and issue tracker.
 
  -- Daniel Ramos (Capitain Jack) <Capitain_Jack@yahoo.com>  Sat, 24 Oct 2026 17:10:00 -0300
 
