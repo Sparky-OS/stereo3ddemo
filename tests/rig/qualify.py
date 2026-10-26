@@ -70,11 +70,20 @@ else:
     object_ids = {x['object'] for x in decl['created'] if x['surface'] == surface}
     require(any(x['object'] in object_ids and x['value'] == 3 for x in decl['set_content']), 'scene declares left-first side-by-side content')
     # Follow actual buffers attached to the declared surface, rather than accepting an unrelated allocation.
-    buffers, attachments, viewport, destination = {}, [], {}, {}
+    buffers, pending_buffers, attachments, viewport, destination = {}, {}, [], {}, {}
     for line in raw.splitlines():
         m = re.search(r'create_immed\(new id wl_buffer#(\d+), (\d+), (\d+),', line)
         if m:
             buffers[int(m[1])] = [int(m[2]), int(m[3])]
+        m = re.search(r'zwp_linux_buffer_params_v1#(\d+)\.create\((\d+), (\d+),', line)
+        if m:
+            pending_buffers[int(m[1])] = [int(m[2]), int(m[3])]
+        m = re.search(r'zwp_linux_buffer_params_v1#(\d+)\.created\(new id wl_buffer#(\d+)\)', line)
+        if m and int(m[1]) in pending_buffers:
+            buffers[int(m[2])] = pending_buffers.pop(int(m[1]))
+        m = re.search(r'wl_buffer#(\d+)\.destroy\(\)', line)
+        if m:
+            buffers.pop(int(m[1]), None)
         m = re.search(r'get_viewport\(new id wp_viewport#(\d+), wl_surface#(\d+)\)', line)
         if m:
             viewport[int(m[2])] = int(m[1])
