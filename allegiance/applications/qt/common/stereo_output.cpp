@@ -5,6 +5,7 @@
 #include <QPlatformSurfaceEvent>
 #include <QWindow>
 #include <qpa/qplatformnativeinterface.h>
+#include <qpa/qplatformwindow_p.h>
 #include <QtGui/qguiapplication_platform.h>
 
 #ifdef ALLEGIANCE_STEREO_DECLARE
@@ -135,6 +136,18 @@ void StereoDeclaration::declare()
     if (!m_window->handle())
         return;
     if (isWayland()) {
+#if QT_CONFIG(wayland)
+        // Reparenting can replace wl_surface without replacing QWindow's platform handle.
+        // Remove the declaration while the old surface is alive, and follow its replacement.
+        if (auto* native = m_window->nativeInterface<QNativeInterface::Private::QWaylandWindow>()) {
+            using NativeWindow = QNativeInterface::Private::QWaylandWindow;
+            connect(native, &NativeWindow::surfaceCreated, this, &StereoDeclaration::declare, Qt::UniqueConnection);
+            connect(native, &NativeWindow::surfaceRoleCreated, this, &StereoDeclaration::declare, Qt::UniqueConnection);
+            connect(native, &NativeWindow::surfaceRoleDestroyed, this, &StereoDeclaration::remove, Qt::UniqueConnection);
+        }
+#endif
+        if (m_declared)
+            return;
         wl_surface* surface = waylandSurface(m_window);
         if (!surface)
             return;

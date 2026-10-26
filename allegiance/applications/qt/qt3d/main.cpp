@@ -20,6 +20,7 @@
 Q_IMPORT_QML_PLUGIN(Stereo3D_Quick3DPlugin)
 #endif
 #include <QOpenGLContext>
+#include <functional>
 
 // The two renderers of the stereo version in one program: the original Qt 3D renderer (OpenGL) and the phase 2
 // Qt Quick 3D renderer (Vulkan or OpenGL, each eye drawn by the edition's Qt Quick). The choice is under Advanced.
