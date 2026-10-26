@@ -18,6 +18,7 @@ p.add_argument('--shown', nargs=2, type=int, default=[1544, 1080])
 p.add_argument('--cursor', choices=['hit', 'focus', 'hidden'])
 p.add_argument('--mono', action='store_true')
 p.add_argument('--executable-sha256')
+p.add_argument('--executable-path', default='/usr/bin/stereo3ddemo')
 p.add_argument('--backend', choices=['vulkan', 'opengl'])
 p.add_argument('--gpu', choices=['AMD', 'NVIDIA'])
 a = p.parse_args()
@@ -35,7 +36,7 @@ require(bool(r.get('area')), 'captured scene area is present')
 require([r['area']['w'], r['area']['h']] == a.shown, 'displayed area has one view size')
 require([r['camera']['eye_w'], r['camera']['eye_h']] == a.eye, 'logged eye raster matches requested resolution')
 if a.executable_sha256:
-    require(a.executable_sha256 + '  /usr/bin/stereo3ddemo' in (a.case / 'installed.txt').read_text(), 'installed executable hash matches qualified package')
+    require(a.executable_sha256 + '  ' + a.executable_path in (a.case / 'installed.txt').read_text(), 'executed binary hash matches the supplied candidate')
 if a.backend:
     require(f'renderer quick3d-{a.backend} graphics api ' in log, 'requested renderer is active')
 if a.gpu and a.backend == 'vulkan':
@@ -93,14 +94,21 @@ else:
             require(cursor['left'] is None and cursor['right'] is None, 'system-only mode has no rendered 3D cursor')
         else:
             require('disparity_px' in cursor, '3D cursor is visible in both eyes')
-            hits = list(re.finditer(r'cursor (hit .* at|hits nothing: on focus plane) QVector3D\(([^)]*)\)', log))
-            require(bool(hits), 'cursor world position is logged')
+            hits = list(re.finditer(
+                r'cursor (?:(?P<kind>hit .* at|hits nothing: on focus plane) QVector3D\((?P<position>[^)]*)\)'
+                r'|at QPointF\([^)]*\) hits nothing: on the focus plane at (?P<focus>[\d.e+-]+))', log))
+            require(bool(hits), 'cursor hit position or focus-plane depth is logged')
             hit = hits[-1]
-            require(('hit ' in hit[1]) == (a.cursor == 'hit'), 'cursor uses the expected hit or focus-plane fallback')
-            position = [float(x) for x in hit[2].split(',')]
+            require(bool(hit['kind'] and hit['kind'].startswith('hit ')) == (a.cursor == 'hit'), 'cursor uses the expected hit or focus-plane fallback')
             cam = r['camera']
-            norm = math.sqrt(sum(x*x for x in cam['forward']))
-            depth = sum((position[i] - cam['position'][i]) * cam['forward'][i] / norm for i in range(3))
+            position = None
+            if hit['focus']:
+                depth = float(hit['focus'])
+                require(abs(depth - cam['d']) <= .0001, 'fallback cursor lies on the camera convergence plane')
+            else:
+                position = [float(x) for x in hit['position'].split(',')]
+                norm = math.sqrt(sum(x*x for x in cam['forward']))
+                depth = sum((position[i] - cam['position'][i]) * cam['forward'][i] / norm for i in range(3))
             predicted = a.shown[0] * .5 * cam['e'] * (1/depth - 1/cam['d']) / (math.tan(math.radians(cam['fov'])/2) * cam['aspect'])
             error = cursor['disparity_px'] - predicted
             require(abs(error) <= 1, 'cursor disparity is within one pixel of its world depth')
