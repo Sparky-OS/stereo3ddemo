@@ -122,6 +122,41 @@ for name, fn in classes.items():
             entry["error_px"] = entry["disparity_px"] - predicted
     result["markers"][name] = entry
 
+if want_cursor:
+    def ring_center(eye):
+        # The ball cursor has a circular billboard. Fit its outer ring, whose centre
+        # remains the cursor point when nearer geometry occludes part of the ring.
+        r, g, b = eye[..., 0], eye[..., 1], eye[..., 2]
+        mask = classes['cursor'](r, g, b)
+        if not result['area']:
+            return None
+        box = np.zeros_like(mask)
+        box[y0:y1, x0:x1] = True
+        y, x = np.nonzero(mask & box)
+        if len(x) < 40:
+            return None
+        cx, cy = (x.min()+x.max())/2, (y.min()+y.max())/2
+        radius = max(x.max()-x.min(), y.max()-y.min())/2
+        if radius < 25:
+            return None
+        outer = np.hypot(x-cx, y-cy) > .8*radius
+        xx, yy = x[outer]-cx, y[outer]-cy
+        if len(xx) < 40:
+            return None
+        fit, _, rank, _ = np.linalg.lstsq(np.column_stack((2*xx, 2*yy, np.ones_like(xx))), xx*xx+yy*yy, rcond=None)
+        fitted_radius = float(np.sqrt(fit[2] + sum(fit[:2]**2)))
+        residual = float(np.sqrt(np.mean((np.hypot(xx-fit[0], yy-fit[1])-fitted_radius)**2)))
+        if rank != 3 or not math.isfinite(residual) or residual > 1.5:
+            return None
+        return {'x': float(cx+fit[0]), 'y': float(cy+fit[1]), 'radius': fitted_radius,
+                'residual_px': residual, 'n': int(len(xx))}
+    cl, cr = ring_center(left), ring_center(right) if info.get('stereo') else None
+    entry = {'left': cl, 'right': cr}
+    if cl and cr:
+        entry['disparity_px'] = cl['x'] - cr['x']
+        entry['vertical_px'] = cl['y'] - cr['y']
+    result['markers']['cursor_ring'] = entry
+
 # --- declarations
 decl = {"created": [], "set_content": [], "subsurfaces": {}, "toplevels": [], "x11_supported": None}
 wl = case / "wl.txt"

@@ -16,6 +16,7 @@ p.add_argument('case', type=Path)
 p.add_argument('--eye', nargs=2, type=int, required=True)
 p.add_argument('--shown', nargs=2, type=int, default=[1544, 1080])
 p.add_argument('--cursor', choices=['hit', 'focus', 'hidden'])
+p.add_argument('--cursor-feature', choices=['centroid', 'ring'], default='centroid')
 p.add_argument('--mono', action='store_true')
 p.add_argument('--executable-sha256')
 p.add_argument('--executable-path', default='/usr/bin/stereo3ddemo')
@@ -98,7 +99,7 @@ else:
     require(destination.get(viewport.get(surface)) == a.shown, 'KWin viewport destination is one displayed view')
     r['protocol_check'] = {'last_scene_buffer': attachments[-1], 'destination': destination[viewport[surface]]}
     if a.cursor:
-        cursor = r['markers']['cursor']
+        cursor = r['markers']['cursor_ring' if a.cursor_feature == 'ring' else 'cursor']
         if a.cursor == 'hidden':
             require(cursor['left'] is None and cursor['right'] is None, 'system-only mode has no rendered 3D cursor')
         else:
@@ -122,6 +123,6 @@ else:
             error = cursor['disparity_px'] - predicted
             require(abs(error) <= 1, 'cursor disparity is within one pixel of its world depth')
             require(abs(cursor['vertical_px']) <= 1, 'cursor vertical disparity is within one pixel')
-            r['cursor_check'] = {'world_position': position, 'depth': depth, 'predicted_px': predicted, 'error_px': error}
+            r['cursor_check'] = {'feature': a.cursor_feature, 'world_position': position, 'depth': depth, 'predicted_px': predicted, 'error_px': error}
 require('Unsupported image format' not in log, 'image format plugins decode the logos')
 print(json.dumps({'case': a.case.name, 'checks': checks, 'protocol': r.get('protocol_check'), 'cursor': r.get('cursor_check')}, indent=2))
