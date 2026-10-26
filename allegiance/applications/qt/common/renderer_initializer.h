@@ -41,7 +41,7 @@ struct ScreenshotGrabber {
 };
 
 template<typename RendererSurface, typename Renderer>
-class RendererInitializer
+class RendererInitializer : public QObject
 {
 public:
     RendererInitializer(MainWindow* mainWindow, RendererSurface* rendererSurface,
@@ -94,12 +94,12 @@ public:
         auto* pnav_params = m_navParams.get();
 
         QObject::connect(m_windowEventWatcher.get(), &WindowEventWatcher::close,
-                         [this]() {
+                         this, [this]() {
                              m_renderer.reset();
                              qApp->quit();
                          });
         QObject::connect(m_windowEventWatcher.get(), &WindowEventWatcher::scrollEvent,
-                         [this](::QWheelEvent* e) {
+                         this, [this](::QWheelEvent* e) {
                              m_camera.worldCursor = m_renderer->cursorWorldPosition();
 
                              const float focusDistancePercentage = m_cameraController->focusDistance();
@@ -136,7 +136,7 @@ public:
                              }
                          });
         QObject::connect(m_mainWindow, &MainWindow::onScreenshot,
-                         [this]() {
+                         this, [this]() {
                              auto x = [this](const uint8_t* data, uint32_t width, uint32_t height) {
                                  m_screenshotGrabber.CreatePixmap(data, width, height);
                              };
@@ -144,24 +144,24 @@ public:
                              m_renderer->screenshot(x);
                          });
 
-        auto* showImageAction = new QAction(QIcon{ ":stereo3_contrast.png" }, "Show Image", sideMenu);
+        auto* showImageAction = new QAction(QIcon{ ":stereo3_contrast.png" }, "Show Image", this);
         QObject::connect(sideMenu, &all::qt::SideMenu::onLoadImage, showImageAction, &QAction::trigger);
         QObject::connect(showImageAction, &QAction::triggered,
-                         [this]() {
+                         this, [this]() {
                              m_renderer->showImage();
                          });
-        auto* loadModelAction = new QAction(QIcon{ ":3D_contrast.png" }, "Load Model", sideMenu);
+        auto* loadModelAction = new QAction(QIcon{ ":3D_contrast.png" }, "Load Model", this);
         QObject::connect(sideMenu, &all::qt::SideMenu::onLoadModel, loadModelAction, &QAction::trigger);
         QObject::connect(loadModelAction, &QAction::triggered,
-                         [this]() {
+                         this, [this]() {
                              m_renderer->showModel();
                          });
         QObject::connect(sideMenu, &all::qt::SideMenu::onClose,
-                         [this]() {
+                         this, [this]() {
                              qApp->postEvent(m_mainWindow, new QCloseEvent);
                          });
         QObject::connect(m_windowEventWatcher.get(), &WindowEventWatcher::mouseEvent,
-                         [this, pnav_params](::QMouseEvent* e) {
+                         this, [this, pnav_params](::QMouseEvent* e) {
                              static bool flipped = false;
 
                              const QPointF mousePos = e->position();
@@ -276,68 +276,68 @@ public:
                 m_camera.aspectRatio = float(eye.width()) / eye.height();
             m_stereoController->setEyeSize(eye);
         };
-        QObject::connect(qWindow, &QWindow::widthChanged, updateAspectRatio);
-        QObject::connect(qWindow, &QWindow::heightChanged, updateAspectRatio);
+        QObject::connect(qWindow, &QWindow::widthChanged, this, updateAspectRatio);
+        QObject::connect(qWindow, &QWindow::heightChanged, this, updateAspectRatio);
 
-        QObject::connect(m_cameraController, &CameraController::focusDistanceChanged, [this] { focusDistanceUpdated(); });
-        QObject::connect(m_cameraController, &CameraController::popOutChanged, [this] { focusDistanceUpdated(); });
-        QObject::connect(m_cameraController, &CameraController::separationBasedOnFocusDistanceChanged, [this] { focusDistanceUpdated(); });
-        QObject::connect(m_cameraController, &CameraController::separationBasedOnFocusDistanceDividerChanged, [this] { focusDistanceUpdated(); });
+        QObject::connect(m_cameraController, &CameraController::focusDistanceChanged, this, [this] { focusDistanceUpdated(); });
+        QObject::connect(m_cameraController, &CameraController::popOutChanged, this, [this] { focusDistanceUpdated(); });
+        QObject::connect(m_cameraController, &CameraController::separationBasedOnFocusDistanceChanged, this, [this] { focusDistanceUpdated(); });
+        QObject::connect(m_cameraController, &CameraController::separationBasedOnFocusDistanceDividerChanged, this, [this] { focusDistanceUpdated(); });
 
-        QObject::connect(m_cameraController, &CameraController::fovChanged, [this](float v) {
+        QObject::connect(m_cameraController, &CameraController::fovChanged, this, [this](float v) {
             m_camera.fov = v;
         });
-        QObject::connect(m_cameraController, &CameraController::flippedChanged, [this](bool v) {
+        QObject::connect(m_cameraController, &CameraController::flippedChanged, this, [this](bool v) {
             m_camera.flipped = v;
         });
-        QObject::connect(m_cameraController, &CameraController::eyeDistanceChanged, [this](float v) {
+        QObject::connect(m_cameraController, &CameraController::eyeDistanceChanged, this, [this](float v) {
             m_camera.interocularDistance = v;
         });
-        QObject::connect(m_cameraController, &CameraController::displayModeChanged, [this](CameraController::DisplayMode v) {
+        QObject::connect(m_cameraController, &CameraController::displayModeChanged, this, [this](CameraController::DisplayMode v) {
             m_renderer->propertyChanged("display_mode", all::DisplayMode(v));
         });
-        QObject::connect(m_cameraController, &CameraController::stereoModeChanged, [this](CameraController::StereoMode v) {
+        QObject::connect(m_cameraController, &CameraController::stereoModeChanged, this, [this](CameraController::StereoMode v) {
             m_camera.mode = all::StereoCamera::Mode(v);
         });
-        QObject::connect(m_cameraController, &CameraController::showAutoFocusAreaChanged, [this](bool enabled) {
+        QObject::connect(m_cameraController, &CameraController::showAutoFocusAreaChanged, this, [this](bool enabled) {
             m_renderer->propertyChanged("show_focus_area", enabled && m_cameraController->autoFocus());
         });
-        QObject::connect(m_cameraController, &CameraController::showFocusPlaneChanged, [this](bool enabled) {
+        QObject::connect(m_cameraController, &CameraController::showFocusPlaneChanged, this, [this](bool enabled) {
             m_renderer->propertyChanged("show_focus_plane", enabled);
         });
-        QObject::connect(m_cameraController, &CameraController::autoFocusChanged, [this](bool enabled) {
+        QObject::connect(m_cameraController, &CameraController::autoFocusChanged, this, [this](bool enabled) {
             m_renderer->propertyChanged("auto_focus", enabled);
             m_renderer->propertyChanged("show_focus_area", m_cameraController->showAutoFocusArea() && m_cameraController->autoFocus());
         });
-        QObject::connect(m_miscController, &MiscController::frustumViewEnabledChanged, [this](bool enabled) {
+        QObject::connect(m_miscController, &MiscController::frustumViewEnabledChanged, this, [this](bool enabled) {
             m_renderer->propertyChanged("frustum_view_enabled", enabled);
         });
-        QObject::connect(m_miscController, &MiscController::wireframeEnabledChanged, [this](bool enabled) {
+        QObject::connect(m_miscController, &MiscController::wireframeEnabledChanged, this, [this](bool enabled) {
             m_renderer->propertyChanged("wireframe_enabled", enabled);
         });
 
-        QObject::connect(m_cursorController, &CursorController::displayModeChanged, [this](CursorDisplayMode displayMode) {
+        QObject::connect(m_cursorController, &CursorController::displayModeChanged, this, [this](CursorDisplayMode displayMode) {
             m_renderer->setCursorEnabled(
                     displayMode == CursorDisplayMode::Both ||
                     displayMode == CursorDisplayMode::ThreeDimensionalOnly);
         });
-        QObject::connect(m_cursorController, &CursorController::cursorChanged, [this](CursorType type) {
+        QObject::connect(m_cursorController, &CursorController::cursorChanged, this, [this](CursorType type) {
             m_renderer->propertyChanged("cursor_type", type);
         });
-        QObject::connect(m_cursorController, &CursorController::cursorScaleChanged, [this](float scale) {
+        QObject::connect(m_cursorController, &CursorController::cursorScaleChanged, this, [this](float scale) {
             m_renderer->propertyChanged("cursor_scale_factor", scale);
         });
-        QObject::connect(m_cursorController, &CursorController::cursorTintChanged, [this](const QColor& color) {
+        QObject::connect(m_cursorController, &CursorController::cursorTintChanged, this, [this](const QColor& color) {
             std::array<float, 4> c = { color.redF(), color.greenF(), color.blueF(), color.alphaF() };
             m_renderer->propertyChanged("cursor_color", c);
         });
-        QObject::connect(m_cameraController, &CameraController::autoFocusChanged, [this](bool afEnabled) {
+        QObject::connect(m_cameraController, &CameraController::autoFocusChanged, this, [this](bool afEnabled) {
             m_mouseInputTracker.cursor_changes_focus = !afEnabled;
         });
-        QObject::connect(m_cameraController, &CameraController::viewAll, [this]() {
+        QObject::connect(m_cameraController, &CameraController::viewAll, this, [this]() {
             m_renderer->viewAll();
         });
-        QObject::connect(m_sceneController, &SceneController::OpenLoadModelDialog, [this]() {
+        QObject::connect(m_sceneController, &SceneController::OpenLoadModelDialog, this, [this]() {
             QSettings settings;
             const QString lastDir = settings.value(QStringLiteral("lastDirName")).toString();
 
@@ -391,8 +391,9 @@ public:
         m_renderer->completeInitialization();
     }
 
-    ~RendererInitializer()
+    ~RendererInitializer() override
     {
+        QObject::disconnect(nullptr, nullptr, this, nullptr);
     }
 
 public:
@@ -436,6 +437,8 @@ public:
         float zDistanceNormalized = std::clamp((worldDistanceToCamera - m_camera.nearPlane()) / (m_camera.farPlane() - m_camera.nearPlane()), 0.0f, 1.0f);
 
         m_cameraController->setFocusDistance(zDistanceNormalized * 100.0f);
+        // New scene bounds can leave the percentage unchanged while changing its world distance.
+        focusDistanceUpdated();
     }
 
     void focusDistanceUpdated()
