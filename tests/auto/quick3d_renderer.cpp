@@ -29,6 +29,15 @@ Q_IMPORT_QML_PLUGIN(Stereo3D_Quick3DPlugin)
 #include <any>
 #include <cmath>
 
+// Supply model bounds without depending on the asynchronous mesh loader.
+class FixedBoundsRenderer : public all::quick3d::Quick3DRenderer
+{
+public:
+    using Quick3DRenderer::Quick3DRenderer;
+    glm::vec3 sceneCenter() const { return { 0.0f, -0.64f, 3.0f }; }
+    glm::vec3 sceneExtent() const { return { 2.0f, 2.0f, 18.0f }; }
+};
+
 // The Qt Quick 3D renderer's cameras: the left and right cameras are the shared off-axis maths (the frusta of the
 // stereo_frustum test), the centre camera is symmetric between them, and the view shows the eye the window is
 // drawing on the quad-buffer path, or one eye per view on the declared pair path.
@@ -227,6 +236,32 @@ private Q_SLOTS:
         mainWindow.sideMenu()->cameraController()->setFov(55.0f);
         mainWindow.sideMenu()->miscController()->setWireframeEnabled(true);
         QCOMPARE(mainWindow.sideMenu()->cameraController()->fov(), 55.0f);
+    }
+
+    void initialFitUsesTheDisplayedView()
+    {
+        all::qt::MainWindow mainWindow(QSize(1920, 1080));
+        auto* view = new QQuickWindow;
+        mainWindow.setEmbeddedWindow(view);
+        mainWindow.centralWidget()->setFixedSize(1544, 1080);
+        mainWindow.setEmbeddedViews(2);
+        mainWindow.sideMenu()->cameraController()->setFov(40.0f);
+        // QWidget's container temporarily resets the native window to one view's
+        // width before the queued correction restores its two-eye raster.
+        view->resize(1544, 1080);
+        all::qt::RendererInitializer<QQuickWindow, FixedBoundsRenderer> initializer(
+                &mainWindow, view, all::StereoPath::SideBySide);
+        initializer.propertyChanged("scene_loaded", {});
+        QObject* camera = nullptr;
+        for (QQuickItem* child : view->contentItem()->childItems())
+            if (child->objectName() == QStringLiteral("stereoScene"))
+                camera = child->findChild<QObject*>(QStringLiteral("centerCamera"));
+        QVERIFY(camera);
+        const float distance = 1.05f * 9.0f / std::tan(glm::radians(20.0f));
+        const QVector3D position = camera->property("position").value<QVector3D>();
+        QVERIFY2(std::abs(position.z() - (3.0f - distance)) < 0.001f,
+                 qPrintable(QStringLiteral("camera z %1, expected %2")
+                            .arg(position.z()).arg(3.0f - distance)));
     }
 
     void singleViewCamera_data()
