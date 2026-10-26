@@ -107,7 +107,7 @@ Item {
                 visible: root.cursorType !== 1
                 Model {
                     source: "#Rectangle"
-                    scale: Qt.vector3d(0.02, 0.02, 0.02) // two units wide
+                    scale: Qt.vector3d(0.12, 0.12, 0.12) // the original CursorBillboard's twelve-unit plane
                     materials: PrincipledMaterial {
                         lighting: PrincipledMaterial.NoLighting
                         baseColor: root.cursorColor

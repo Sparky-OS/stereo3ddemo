@@ -31,6 +31,8 @@ stereo3ddemo (0.3.1+git20250303.4f99a5d+dfsg+stereo3d3) unstable; urgency=medium
   * Use the centre camera when 3D is off, preserving the teaching display
     overrides. Cover camera selection and renderer destruction in QTest;
     qualify mono projection and asynchronous NVIDIA buffer attachments.
+  * Preserve the original twelve-unit textured cursor billboard footprint
+    so the ring, crosshair and dot retain their visible size.
 
  -- Daniel Ramos (Capitain Jack) <Capitain_Jack@yahoo.com>  Sat, 24 Oct 2026 17:10:00 -0300
 
