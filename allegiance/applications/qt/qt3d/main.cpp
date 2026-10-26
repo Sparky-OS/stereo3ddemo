@@ -1,6 +1,8 @@
 #include <QApplication>
 #include <QCommandLineParser>
 #include <QQuickWindow>
+#include <QPointer>
+#include <QSGRendererInterface>
 #include <QSettings>
 #include <QSurfaceFormat>
 #include <QTranslator>
@@ -13,6 +15,7 @@
 #ifdef ALLEGIANCE_QUICK3D
 #include <renderer/quick3d/quick3d_renderer.h>
 #include <QtQml/qqmlextensionplugin.h>
+#include <rhi/qrhi.h>
 // The renderer's QML module is static
 Q_IMPORT_QML_PLUGIN(Stereo3D_Quick3DPlugin)
 #endif
@@ -98,11 +101,15 @@ int main(int argc, char** argv)
     std::unique_ptr<Quick3DInitializer> quick3dInitializer;
 #endif
     bool shown = false;
+    bool quadBufferUnavailable = false;
     QMetaObject::Connection renderSizeConnection;
+    QMetaObject::Connection stereoCapabilityConnection;
 
     // Makes the 3D window and its renderer for the path the user asked for and the stack offers; called again
     // when the user changes the 3D options, since a stereo context is a property of the window.
-    auto start = [&]() {
+    std::function<void()> start;
+    start = [&]() {
+        QObject::disconnect(stereoCapabilityConnection);
         qt3dInitializer.reset();
 #ifdef ALLEGIANCE_QUICK3D
         quick3dInitializer.reset();
@@ -112,7 +119,7 @@ int main(int argc, char** argv)
 
         const bool wants3D = stereo->enabled() && !qEnvironmentVariableIsSet("DISABLE_STEREO");
         const StereoController::Path choice = stereo->path();
-        const bool tryQuadBuffer = wants3D && choice != StereoController::Path::SideBySide;
+        const bool tryQuadBuffer = wants3D && choice != StereoController::Path::SideBySide && !quadBufferUnavailable;
 
         QWindow* renderingSurface = nullptr; // Rendering Surface for 3D Renderer
         if (RendererController::usesQt3D(engine)) {
@@ -208,11 +215,42 @@ int main(int argc, char** argv)
             break;
         }
         stereo->setActivePath(description, all::stereoDraws(path));
+
+#ifdef ALLEGIANCE_QUICK3D
+        if (path == all::StereoPath::QuadBuffer && !RendererController::usesQt3D(engine)) {
+            auto* window = static_cast<QQuickWindow*>(renderingSurface);
+            // QWindow's format can retain the stereo request even when the RHI only has one target.
+            // Inspect the created swapchain on its render thread, then recreate on the GUI thread.
+            stereoCapabilityConnection = QObject::connect(window, &QQuickWindow::afterFrameEnd, window,
+                    [&, window, checked = false]() mutable {
+                if (checked)
+                    return;
+                auto* swapchain = static_cast<QRhiSwapChain*>(window->rendererInterface()->getResource(
+                        window, QSGRendererInterface::RhiSwapchainResource));
+                if (!swapchain)
+                    return;
+                checked = true;
+                const bool hasRightTarget = swapchain->currentFrameRenderTarget(QRhiSwapChain::LeftBuffer)
+                        != swapchain->currentFrameRenderTarget(QRhiSwapChain::RightBuffer);
+                qCDebug(all::qt::lcStereo) << "swapchain has distinct eye targets" << hasRightTarget;
+                if (!hasRightTarget) {
+                    QMetaObject::invokeMethod(&mainWindow, [&, window = QPointer<QQuickWindow>(window)] {
+                        if (!window || mainWindow.embeddedWindow() != window)
+                            return;
+                        quadBufferUnavailable = true;
+                        start();
+                    }, Qt::QueuedConnection);
+                }
+            }, Qt::DirectConnection);
+        }
+#endif
     };
     QObject::connect(stereo, &StereoController::restartRequested, &mainWindow, [&]() {
         QMetaObject::invokeMethod(&mainWindow, start, Qt::QueuedConnection);
     });
     start();
 
-    return app.exec();
+    const int result = app.exec();
+    QObject::disconnect(stereoCapabilityConnection);
+    return result;
 }
