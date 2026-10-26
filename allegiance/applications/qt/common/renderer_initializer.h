@@ -407,7 +407,12 @@ public:
             const glm::vec3 sceneExtent = m_renderer->sceneExtent();
             const float radius = std::max(sceneExtent.x, std::max(sceneExtent.y, sceneExtent.z)) * 0.5f;
 
-            float height = (1.05f * radius) / (m_renderer->aspectRatio() < 1.0f ? m_renderer->aspectRatio() : 1.0f);
+            // A window container can temporarily give a two-eye native window
+            // only one view's width. Fit the model to the displayed area; the
+            // queued raster correction must not change its initial framing.
+            const QSize shown = m_mainWindow->centralWidget()->size();
+            const float aspect = shown.height() > 0 ? float(shown.width()) / shown.height() : m_renderer->aspectRatio();
+            const float height = (1.05f * radius) / std::min(aspect, 1.0f);
             // We have tan(fov / 2) = height / dist => dist = height / tan(fov / 2)
             float dist = height / std::tan(glm::radians(m_renderer->fieldOfView() / 2.0f));
 
