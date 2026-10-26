@@ -215,6 +215,20 @@ private Q_SLOTS:
         QCOMPARE(scene.renderer->viewCamera(0), scene.renderer->eyeCamera(all::Eye::Left));
     }
 
+    void destroyedInitializerDisconnectsControllers()
+    {
+        all::qt::MainWindow mainWindow(QSize(1544, 1080));
+        auto* view = new QQuickWindow;
+        mainWindow.setEmbeddedWindow(view);
+        {
+            all::qt::RendererInitializer<QQuickWindow, all::quick3d::Quick3DRenderer> initializer(&mainWindow, view);
+        }
+        // The menu outlives each renderer when the user changes stereo routes.
+        mainWindow.sideMenu()->cameraController()->setFov(55.0f);
+        mainWindow.sideMenu()->miscController()->setWireframeEnabled(true);
+        QCOMPARE(mainWindow.sideMenu()->cameraController()->fov(), 55.0f);
+    }
+
     void singleViewCamera_data()
     {
         QTest::addColumn<bool>("off");
