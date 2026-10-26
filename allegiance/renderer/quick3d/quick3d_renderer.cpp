@@ -159,6 +159,7 @@ void Quick3DRenderer::createAspects(std::shared_ptr<all::ModelNavParameters> nav
     }
 
     m_scene->setProperty("views", all::stereoViews(m_stereoPath));
+    m_scene->setProperty("stereoDisabled", m_stereoPath == all::StereoPath::Off);
     m_scene->setProperty("cursorColor", QColor(Qt::white));
 
     if (m_loader)

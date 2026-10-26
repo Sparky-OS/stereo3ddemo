@@ -15,6 +15,7 @@ Item {
 
     // Set by the renderer
     property int views: 1
+    property bool stereoDisabled: false
     property int eyeWidth: 640
     property int eyeHeight: 480
     property int currentEye: 0 // 0: left (or the one picture), 1: right; the quad-buffer pass being drawn
@@ -49,6 +50,8 @@ Item {
             return leftCamera;
         if (displayMode === 3)
             return rightCamera;
+        if (stereoDisabled)
+            return centerCamera;
         return eye === 1 ? rightCamera : leftCamera;
     }
 
