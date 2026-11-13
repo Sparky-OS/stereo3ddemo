@@ -189,15 +189,6 @@ ColumnLayout {
             }
 
             CheckBoxX {
-                Layout.fillWidth: true
-                title: "Flipped"
-                initial: Camera.flipped
-                onChecked: bchecked => Camera.flipped = bchecked
-
-                ToolTip.text: "Flip the Right and Left cameras."
-            }
-
-            CheckBoxX {
                 id: _1_30th_separation_mode_checkbox
                 Layout.fillWidth: true
                 title: "Set to 1/%1th of Focus Distance".arg(Camera.separationBasedOnFocusDistanceDivider)

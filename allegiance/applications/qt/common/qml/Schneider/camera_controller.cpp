@@ -20,7 +20,7 @@ CameraController::CameraController(QObject* parent)
     m_displayMode = DisplayMode(settings.value(QStringLiteral("displayMode"), int(m_displayMode)).toInt());
     m_stereoMode = StereoMode(settings.value(QStringLiteral("stereoMode"), int(m_stereoMode)).toInt());
     m_eyeDistance = settings.value(QStringLiteral("eyeDistance"), m_eyeDistance).toFloat();
-    m_flipped = settings.value(QStringLiteral("flipped"), m_flipped).toBool();
+    // No eye swap of the program's own: the desktop swaps per output. A swap saved by an earlier version is not read.
     m_autoFocus = settings.value(QStringLiteral("autoFocus"), m_autoFocus).toBool();
     m_showAutoFocusArea = settings.value(QStringLiteral("showAutoFocusArea"), m_showAutoFocusArea).toBool();
     m_focusDistance = settings.value(QStringLiteral("focusDistance"), m_focusDistance).toFloat();
@@ -106,7 +106,6 @@ void CameraController::setFlipped(bool flipped)
     if (m_flipped == flipped)
         return;
     m_flipped = flipped;
-    save("flipped", flipped);
     Q_EMIT flippedChanged(flipped);
 }
 
