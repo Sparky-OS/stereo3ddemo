@@ -12,9 +12,19 @@ class SceneController : public QObject
     Q_PROPERTY(bool lockMouseInPlace READ lockMouseInPlace WRITE setLockMouseInPlace NOTIFY lockMouseInPlaceChanged)
     Q_PROPERTY(float zoomAmount READ zoomAmount WRITE setZoomAmount NOTIFY zoomAmountChanged)
     Q_PROPERTY(float defaultZoomAmount READ defaultZoomAmount CONSTANT)
+    Q_PROPERTY(SpaceMouseState spaceMouseState READ spaceMouseState NOTIFY spaceMouseChanged)
+    Q_PROPERTY(QString spaceMouseDevice READ spaceMouseDevice NOTIFY spaceMouseChanged)
     QML_SINGLETON
     QML_NAMED_ELEMENT(Scene)
 public:
+    // What the 3D mouse service answered; told in the side menu
+    enum class SpaceMouseState {
+        NoService,
+        NoDevice,
+        Connected
+    };
+    Q_ENUM(SpaceMouseState)
+
     explicit SceneController(QObject* parent = nullptr);
 
     float mouseSensitivity();
@@ -34,6 +44,10 @@ public:
 
     float defaultZoomAmount() const;
 
+    SpaceMouseState spaceMouseState() const;
+    QString spaceMouseDevice() const;
+    void setSpaceMouse(SpaceMouseState state, const QString& device);
+
 Q_SIGNALS:
     void OpenLoadModelDialog();
     void mouseSensitivityChanged();
@@ -43,6 +57,7 @@ Q_SIGNALS:
     void lockMouseInPlaceChanged();
 
     void zoomAmountChanged();
+    void spaceMouseChanged();
 
 protected:
     float m_mouseSensitivity = 100;
@@ -53,5 +68,7 @@ private:
     bool m_shiftPressed{ false };
     static constexpr float ms_defaultZoomAmount{ 5.0f };
     float m_zoomAmount{ ms_defaultZoomAmount };
+    SpaceMouseState m_spaceMouseState{ SpaceMouseState::Connected };
+    QString m_spaceMouseDevice;
 };
 

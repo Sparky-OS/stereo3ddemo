@@ -60,6 +60,16 @@ ScrollView {
             visible: stereo_section_title.isVisible
         }
 
+        // A failure is told where it is seen, not only under Advanced
+        Label {
+            objectName: "spaceMouseNotice"
+            Layout.fillWidth: true
+            wrapMode: Text.WordWrap
+            font: Style.fontDefault
+            visible: Scene.spaceMouseState === Scene.SpaceMouseState.NoService
+            text: qsTr("The 3D mouse service (spacenavd) is not running: a 3D mouse will not be found until it runs.")
+        }
+
         // Advanced: the demonstrator's own controls
         Pane {
             Layout.fillWidth: true
@@ -223,6 +233,18 @@ ScrollView {
             ColumnLayout {
                 anchors.left: parent.left
                 anchors.right: parent.right
+
+                // What the 3D mouse service answered
+                Label {
+                    objectName: "spaceMouseStatus"
+                    Layout.fillWidth: true
+                    wrapMode: Text.WordWrap
+                    font: Style.fontDefault
+                    text: Scene.spaceMouseState === Scene.SpaceMouseState.NoService ? qsTr("3D mouse: the service (spacenavd) is not running")
+                        : Scene.spaceMouseState === Scene.SpaceMouseState.NoDevice ? qsTr("3D mouse: the service runs, no device is connected")
+                        : Scene.spaceMouseDevice.length > 0 ? qsTr("3D mouse: %1").arg(Scene.spaceMouseDevice)
+                        : qsTr("3D mouse: connected")
+                }
 
                 SliderValue {
                     id: mousesensitivity

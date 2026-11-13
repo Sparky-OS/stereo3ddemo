@@ -15,6 +15,8 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QFileInfo>
+#include <QSocketNotifier>
+#include <QTimer>
 
 #include <any>
 
@@ -91,6 +93,21 @@ public:
         m_navParams = std::make_shared<all::ModelNavParameters>();
         m_spacemouse.emplace(&m_camera, m_navParams);
         m_spacemouse->setUseUserPivot(true);
+#if defined(WITH_SPNAV)
+        // The 3D mouse's events are read here, on the camera's thread; a service that is missing is told in the
+        // side menu and looked for again, so one that starts later is found
+        watchSpacemouse();
+        reportSpacemouse();
+        m_spacemouseTimer.setInterval(2000);
+        QObject::connect(&m_spacemouseTimer, &QTimer::timeout, this, [this] {
+            if (m_spacemouse->state() == all::SpacemouseSpnav::State::NoService && m_spacemouse->connect())
+                watchSpacemouse();
+            reportSpacemouse();
+        });
+        m_spacemouseTimer.start();
+#else
+        m_sceneController->setSpaceMouse(SceneController::SpaceMouseState::Connected, {});
+#endif
         auto* pnav_params = m_navParams.get();
 
         QObject::connect(m_windowEventWatcher.get(), &WindowEventWatcher::close,
@@ -436,6 +453,32 @@ public:
         }
     }
 
+#if defined(WITH_SPNAV)
+    void watchSpacemouse()
+    {
+        m_spacemouseNotifier.reset();
+        const int fd = m_spacemouse->fd();
+        if (fd < 0)
+            return;
+        m_spacemouseNotifier = std::make_unique<QSocketNotifier>(fd, QSocketNotifier::Read);
+        QObject::connect(m_spacemouseNotifier.get(), &QSocketNotifier::activated, this, [this] {
+            if (!m_spacemouse->processEvents())
+                m_spacemouseNotifier.reset();
+            reportSpacemouse();
+        });
+    }
+
+    void reportSpacemouse()
+    {
+        using State = all::SpacemouseSpnav::State;
+        const State state = m_spacemouse->state();
+        m_sceneController->setSpaceMouse(state == State::NoService ? SceneController::SpaceMouseState::NoService
+                                                 : state == State::NoDevice ? SceneController::SpaceMouseState::NoDevice
+                                                                            : SceneController::SpaceMouseState::Connected,
+                                         QString::fromStdString(m_spacemouse->deviceName()));
+    }
+#endif
+
     void setAbsolutePlaneDistance(const float worldDistanceToCamera)
     {
         // Convert this distance as % or near to far plane distance
@@ -472,6 +515,10 @@ private:
     std::unique_ptr<Renderer> m_renderer;
     std::optional<all::SpacemouseImpl> m_spacemouse;
     std::shared_ptr<all::ModelNavParameters> m_navParams;
+#if defined(WITH_SPNAV)
+    std::unique_ptr<QSocketNotifier> m_spacemouseNotifier;
+    QTimer m_spacemouseTimer;
+#endif
     ScreenshotGrabber m_screenshotGrabber;
 
     SceneController* m_sceneController{ nullptr };

@@ -78,3 +78,22 @@ float SceneController::defaultZoomAmount() const
 {
     return ms_defaultZoomAmount;
 }
+
+SceneController::SpaceMouseState SceneController::spaceMouseState() const
+{
+    return m_spaceMouseState;
+}
+
+QString SceneController::spaceMouseDevice() const
+{
+    return m_spaceMouseDevice;
+}
+
+void SceneController::setSpaceMouse(SpaceMouseState state, const QString& device)
+{
+    if (m_spaceMouseState == state && m_spaceMouseDevice == device)
+        return;
+    m_spaceMouseState = state;
+    m_spaceMouseDevice = device;
+    Q_EMIT spaceMouseChanged();
+}
