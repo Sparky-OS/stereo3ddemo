@@ -13,6 +13,31 @@
         <source>Advanced</source>
         <translation>Zaawansowane</translation>
     </message>
+    <message>
+        <location filename="../../common/qml/Schneider/qml/MainMenu.qml" line="0"/>
+        <source>3D mouse: the service (spacenavd) is not running</source>
+        <translation>Mysz 3D: usługa (spacenavd) nie działa</translation>
+    </message>
+    <message>
+        <location filename="../../common/qml/Schneider/qml/MainMenu.qml" line="0"/>
+        <source>3D mouse: the service runs, no device is connected</source>
+        <translation>Mysz 3D: usługa działa, nie podłączono urządzenia</translation>
+    </message>
+    <message>
+        <location filename="../../common/qml/Schneider/qml/MainMenu.qml" line="0"/>
+        <source>3D mouse: %1</source>
+        <translation>Mysz 3D: %1</translation>
+    </message>
+    <message>
+        <location filename="../../common/qml/Schneider/qml/MainMenu.qml" line="0"/>
+        <source>3D mouse: connected</source>
+        <translation>Mysz 3D: połączona</translation>
+    </message>
+    <message>
+        <location filename="../../common/qml/Schneider/qml/MainMenu.qml" line="0"/>
+        <source>The 3D mouse service (spacenavd) is not running: a 3D mouse will not be found until it runs.</source>
+        <translation>Usługa myszy 3D (spacenavd) nie działa: mysz 3D zostanie znaleziona dopiero, gdy usługa zacznie działać.</translation>
+    </message>
 </context>
 <context>
     <name>RendererMenu</name>
@@ -166,7 +191,7 @@
     <message>
         <location filename="../main.cpp" line="199"/>
         <source>No stereo context: one picture, the left eye. Choose Automatic or Two views side by side (declared) to draw both eyes without one</source>
-        <translation>Brak kontekstu stereo: jeden obraz, lewe oko. Wybierz Pełne obok siebie (zgłoszone), aby rysować oba oczy bez niego</translation>
+        <translation>Brak kontekstu stereo: jeden obraz, lewe oko. Wybierz Automatycznie lub Dwa widoki obok siebie (zgłoszone), aby rysować oba oczy bez niego</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="201"/>

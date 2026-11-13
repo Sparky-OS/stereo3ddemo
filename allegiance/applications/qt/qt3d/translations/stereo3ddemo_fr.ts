@@ -13,6 +13,31 @@
         <source>Advanced</source>
         <translation>Avancé</translation>
     </message>
+    <message>
+        <location filename="../../common/qml/Schneider/qml/MainMenu.qml" line="0"/>
+        <source>3D mouse: the service (spacenavd) is not running</source>
+        <translation>Souris 3D : le service (spacenavd) n&apos;est pas en marche</translation>
+    </message>
+    <message>
+        <location filename="../../common/qml/Schneider/qml/MainMenu.qml" line="0"/>
+        <source>3D mouse: the service runs, no device is connected</source>
+        <translation>Souris 3D : le service est en marche, aucun appareil connecté</translation>
+    </message>
+    <message>
+        <location filename="../../common/qml/Schneider/qml/MainMenu.qml" line="0"/>
+        <source>3D mouse: %1</source>
+        <translation>Souris 3D : %1</translation>
+    </message>
+    <message>
+        <location filename="../../common/qml/Schneider/qml/MainMenu.qml" line="0"/>
+        <source>3D mouse: connected</source>
+        <translation>Souris 3D : connectée</translation>
+    </message>
+    <message>
+        <location filename="../../common/qml/Schneider/qml/MainMenu.qml" line="0"/>
+        <source>The 3D mouse service (spacenavd) is not running: a 3D mouse will not be found until it runs.</source>
+        <translation>Le service de la souris 3D (spacenavd) n&apos;est pas en marche : une souris 3D ne sera trouvée que lorsqu&apos;il le sera.</translation>
+    </message>
 </context>
 <context>
     <name>RendererMenu</name>
@@ -166,7 +191,7 @@
     <message>
         <location filename="../main.cpp" line="199"/>
         <source>No stereo context: one picture, the left eye. Choose Automatic or Two views side by side (declared) to draw both eyes without one</source>
-        <translation>Pas de contexte stéréo : une seule image, l&apos;œil gauche. Choisissez Côte à côte complet (déclaré) pour dessiner les deux yeux sans contexte stéréo</translation>
+        <translation>Pas de contexte stéréo : une seule image, l&apos;œil gauche. Choisissez Automatique ou Deux vues côte à côte (déclarées) pour dessiner les deux yeux sans contexte stéréo</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="201"/>

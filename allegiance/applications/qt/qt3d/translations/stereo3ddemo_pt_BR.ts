@@ -13,6 +13,31 @@
         <source>Advanced</source>
         <translation>Avançado</translation>
     </message>
+    <message>
+        <location filename="../../common/qml/Schneider/qml/MainMenu.qml" line="0"/>
+        <source>3D mouse: the service (spacenavd) is not running</source>
+        <translation>Mouse 3D: o serviço (spacenavd) não está em execução</translation>
+    </message>
+    <message>
+        <location filename="../../common/qml/Schneider/qml/MainMenu.qml" line="0"/>
+        <source>3D mouse: the service runs, no device is connected</source>
+        <translation>Mouse 3D: o serviço está em execução, nenhum dispositivo conectado</translation>
+    </message>
+    <message>
+        <location filename="../../common/qml/Schneider/qml/MainMenu.qml" line="0"/>
+        <source>3D mouse: %1</source>
+        <translation>Mouse 3D: %1</translation>
+    </message>
+    <message>
+        <location filename="../../common/qml/Schneider/qml/MainMenu.qml" line="0"/>
+        <source>3D mouse: connected</source>
+        <translation>Mouse 3D: conectado</translation>
+    </message>
+    <message>
+        <location filename="../../common/qml/Schneider/qml/MainMenu.qml" line="0"/>
+        <source>The 3D mouse service (spacenavd) is not running: a 3D mouse will not be found until it runs.</source>
+        <translation>O serviço do mouse 3D (spacenavd) não está em execução: um mouse 3D só será encontrado quando ele estiver.</translation>
+    </message>
 </context>
 <context>
     <name>RendererMenu</name>
@@ -166,7 +191,7 @@
     <message>
         <location filename="../main.cpp" line="199"/>
         <source>No stereo context: one picture, the left eye. Choose Automatic or Two views side by side (declared) to draw both eyes without one</source>
-        <translation>Sem contexto estéreo: uma imagem, o olho esquerdo. Escolha Lado a lado completo (declarado) para desenhar os dois olhos sem ele</translation>
+        <translation>Sem contexto estéreo: uma imagem, o olho esquerdo. Escolha Automático ou Duas vistas lado a lado (declaradas) para desenhar os dois olhos sem ele</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="201"/>

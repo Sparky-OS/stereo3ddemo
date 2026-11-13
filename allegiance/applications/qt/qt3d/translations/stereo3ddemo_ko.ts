@@ -13,6 +13,31 @@
         <source>Advanced</source>
         <translation>고급</translation>
     </message>
+    <message>
+        <location filename="../../common/qml/Schneider/qml/MainMenu.qml" line="0"/>
+        <source>3D mouse: the service (spacenavd) is not running</source>
+        <translation>3D 마우스: 서비스(spacenavd)가 실행 중이 아닙니다</translation>
+    </message>
+    <message>
+        <location filename="../../common/qml/Schneider/qml/MainMenu.qml" line="0"/>
+        <source>3D mouse: the service runs, no device is connected</source>
+        <translation>3D 마우스: 서비스 실행 중, 연결된 장치 없음</translation>
+    </message>
+    <message>
+        <location filename="../../common/qml/Schneider/qml/MainMenu.qml" line="0"/>
+        <source>3D mouse: %1</source>
+        <translation>3D 마우스: %1</translation>
+    </message>
+    <message>
+        <location filename="../../common/qml/Schneider/qml/MainMenu.qml" line="0"/>
+        <source>3D mouse: connected</source>
+        <translation>3D 마우스: 연결됨</translation>
+    </message>
+    <message>
+        <location filename="../../common/qml/Schneider/qml/MainMenu.qml" line="0"/>
+        <source>The 3D mouse service (spacenavd) is not running: a 3D mouse will not be found until it runs.</source>
+        <translation>3D 마우스 서비스(spacenavd)가 실행 중이 아닙니다. 실행될 때까지 3D 마우스를 찾을 수 없습니다.</translation>
+    </message>
 </context>
 <context>
     <name>RendererMenu</name>
@@ -166,7 +191,7 @@
     <message>
         <location filename="../main.cpp" line="199"/>
         <source>No stereo context: one picture, the left eye. Choose Automatic or Two views side by side (declared) to draw both eyes without one</source>
-        <translation>스테레오 컨텍스트 없음: 왼쪽 눈 영상 하나만 표시합니다. 스테레오 컨텍스트 없이 두 눈을 그리려면 전체 좌우 배치 (선언됨)를 선택하세요</translation>
+        <translation>스테레오 컨텍스트 없음: 왼쪽 눈 영상 하나만 표시합니다. 스테레오 컨텍스트 없이 두 눈을 그리려면 자동 또는 두 뷰를 나란히 (선언됨)를 선택하세요</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="201"/>

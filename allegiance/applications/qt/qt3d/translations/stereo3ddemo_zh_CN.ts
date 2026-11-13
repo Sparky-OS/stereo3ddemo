@@ -13,6 +13,31 @@
         <source>Advanced</source>
         <translation>高级</translation>
     </message>
+    <message>
+        <location filename="../../common/qml/Schneider/qml/MainMenu.qml" line="0"/>
+        <source>3D mouse: the service (spacenavd) is not running</source>
+        <translation>3D 鼠标：服务 (spacenavd) 未运行</translation>
+    </message>
+    <message>
+        <location filename="../../common/qml/Schneider/qml/MainMenu.qml" line="0"/>
+        <source>3D mouse: the service runs, no device is connected</source>
+        <translation>3D 鼠标：服务正在运行，未连接设备</translation>
+    </message>
+    <message>
+        <location filename="../../common/qml/Schneider/qml/MainMenu.qml" line="0"/>
+        <source>3D mouse: %1</source>
+        <translation>3D 鼠标：%1</translation>
+    </message>
+    <message>
+        <location filename="../../common/qml/Schneider/qml/MainMenu.qml" line="0"/>
+        <source>3D mouse: connected</source>
+        <translation>3D 鼠标：已连接</translation>
+    </message>
+    <message>
+        <location filename="../../common/qml/Schneider/qml/MainMenu.qml" line="0"/>
+        <source>The 3D mouse service (spacenavd) is not running: a 3D mouse will not be found until it runs.</source>
+        <translation>3D 鼠标服务 (spacenavd) 未运行：在它运行之前找不到 3D 鼠标。</translation>
+    </message>
 </context>
 <context>
     <name>RendererMenu</name>
@@ -166,7 +191,7 @@
     <message>
         <location filename="../main.cpp" line="199"/>
         <source>No stereo context: one picture, the left eye. Choose Automatic or Two views side by side (declared) to draw both eyes without one</source>
-        <translation>没有立体上下文：只有左眼一幅画面。选择“全幅左右并排（已声明）”可在没有立体上下文时绘制双眼画面</translation>
+        <translation>没有立体上下文：只有左眼一幅画面。选择“自动”或“两个视图并排（已声明）”可在没有立体上下文时绘制双眼画面</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="201"/>

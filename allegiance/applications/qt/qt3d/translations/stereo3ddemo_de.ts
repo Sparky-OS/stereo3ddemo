@@ -13,6 +13,31 @@
         <source>Advanced</source>
         <translation>Erweitert</translation>
     </message>
+    <message>
+        <location filename="../../common/qml/Schneider/qml/MainMenu.qml" line="0"/>
+        <source>3D mouse: the service (spacenavd) is not running</source>
+        <translation>3D-Maus: der Dienst (spacenavd) läuft nicht</translation>
+    </message>
+    <message>
+        <location filename="../../common/qml/Schneider/qml/MainMenu.qml" line="0"/>
+        <source>3D mouse: the service runs, no device is connected</source>
+        <translation>3D-Maus: der Dienst läuft, kein Gerät angeschlossen</translation>
+    </message>
+    <message>
+        <location filename="../../common/qml/Schneider/qml/MainMenu.qml" line="0"/>
+        <source>3D mouse: %1</source>
+        <translation>3D-Maus: %1</translation>
+    </message>
+    <message>
+        <location filename="../../common/qml/Schneider/qml/MainMenu.qml" line="0"/>
+        <source>3D mouse: connected</source>
+        <translation>3D-Maus: verbunden</translation>
+    </message>
+    <message>
+        <location filename="../../common/qml/Schneider/qml/MainMenu.qml" line="0"/>
+        <source>The 3D mouse service (spacenavd) is not running: a 3D mouse will not be found until it runs.</source>
+        <translation>Der 3D-Maus-Dienst (spacenavd) läuft nicht: eine 3D-Maus wird erst gefunden, wenn er läuft.</translation>
+    </message>
 </context>
 <context>
     <name>RendererMenu</name>
@@ -166,7 +191,7 @@
     <message>
         <location filename="../main.cpp" line="199"/>
         <source>No stereo context: one picture, the left eye. Choose Automatic or Two views side by side (declared) to draw both eyes without one</source>
-        <translation>Kein Stereo-Kontext: ein Bild, das linke Auge. Wählen Sie Volles Side-by-Side (gemeldet), um beide Augen ohne Stereo-Kontext zu zeichnen</translation>
+        <translation>Kein Stereo-Kontext: ein Bild, das linke Auge. Wählen Sie Automatisch oder Zwei Ansichten nebeneinander (gemeldet), um beide Augen ohne Stereo-Kontext zu zeichnen</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="201"/>
