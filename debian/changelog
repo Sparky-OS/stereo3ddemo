@@ -1,3 +1,23 @@
+stereo3ddemo (0.3.1+git20250303.4f99a5d+dfsg+stereo3d4) unstable; urgency=medium
+
+  * The 3D mouse's events are read on the camera's thread (a socket
+    notifier on libspnav's descriptor) instead of a thread of their own:
+    the program ended itself with "Signal is already emitting, nested
+    emits are not supported!" while the view moved, because KDBindings'
+    signals are not thread-safe. KDAB's Windows route is single-threaded
+    too.
+  * A missing 3D mouse service is told in the side menu, and looked for
+    again every two seconds, so a service that starts later is found; the
+    Navigation section names the device, or says that none is connected.
+  * Depend on spacenavd, the service libspnav talks to.
+  * No eye swap of the program's own: "Flipped" is gone from the side
+    menu and a saved one is no longer read. The desktop swaps the eyes per
+    output, in Display Settings.
+  * Spanish, the tenth language; the "No stereo context" line names the
+    list entries by their present names in every language.
+
+ -- Daniel Ramos (Capitain Jack) <Capitain_Jack@yahoo.com>  Fri, 13 Nov 2026 22:10:00 +0000
+
 stereo3ddemo (0.3.1+git20250303.4f99a5d+dfsg+stereo3d3) unstable; urgency=medium
 
   * Phase 2: the Qt Quick 3D renderer. The 3D area is a Qt Quick window
